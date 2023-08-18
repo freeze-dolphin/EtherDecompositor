@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.ivianuu.injekt:injekt-core-jvm:0.0.1-dev704" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.ivianuu.injekt" artifactId="injekt-core-jvm" version="0.0.1-dev704" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ivianuu.injekt/injekt-core-jvm/0.0.1-dev704/1309fc603f03f914070fed556ea83f2852d46b0f/injekt-core-jvm.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ivianuu.injekt/injekt-core-jvm/0.0.1-dev704/a5bbeab0285582b5d23bd355f6b0d6b40cd2e776/injekt-core-jvm-0.0.1-dev704-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: de.tr7zw:item-nbt-api-plugin:2.11.3" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="de.tr7zw" artifactId="item-nbt-api-plugin" version="2.11.3" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/de.tr7zw/item-nbt-api-plugin/2.11.3/6236d3b78755541a2967afa35111be61731d4c4c/item-nbt-api-plugin-2.11.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/de.tr7zw/item-nbt-api-plugin/2.11.3/86543c2b7ae1e221e0e5a8cb862897194da70afd/item-nbt-api-plugin-2.11.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

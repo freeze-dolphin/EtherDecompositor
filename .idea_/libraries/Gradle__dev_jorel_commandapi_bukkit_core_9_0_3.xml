@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: dev.jorel:commandapi-bukkit-core:9.0.3" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="dev.jorel" artifactId="commandapi-bukkit-core" version="9.0.3" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/dev.jorel/commandapi-bukkit-core/9.0.3/f540cfe57bf3ded44b1fd19e69b974714a5123c1/commandapi-bukkit-core-9.0.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/dev.jorel/commandapi-bukkit-core/9.0.3/d0cbcc09e9985605dadda113f4b418453c8068e2/commandapi-bukkit-core-9.0.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
