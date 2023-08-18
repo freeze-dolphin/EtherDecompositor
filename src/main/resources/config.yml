@@ -1,1 +1,2 @@
-prefix: "<dark_gray>[<yellow>系统<dark_gray>] "
+prefix: "<dark_gray>[<color:#FFDAB9>系统<dark_gray>] "
+fill-delay: 1200

@@ -14,6 +14,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.ivianuu.injekt:injekt-core:0.0.1-dev704'
+
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -23,8 +25,10 @@ dependencies {
     compileOnly "dev.jorel:commandapi-bukkit-core:9.0.3"
     compileOnly "com.github.LoneDev6:API-ItemsAdder:3.5.0b"
     compileOnly "com.github.MilkBowl:VaultAPI:1.7.1"
+    compileOnly "de.tr7zw:item-nbt-api-plugin:2.11.3"
 
     implementation "com.alibaba.fastjson2:fastjson2:2.0.35"
+
 }
 
 java {
