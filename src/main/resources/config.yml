@@ -1,2 +1,64 @@
 prefix: "<dark_gray>[<color:#FFDAB9>系统<dark_gray>] "
 fill-delay: 1200
+immediate-fill-chance: 0.1
+fill-try-times: "6,8"
+
+loot-table:
+  - "0.58,2,va:COOKED_BEEF"
+  - "0.58,2,va:COOKED_CHICKEN"
+  - "0.58,3,va:CHICKEN"
+  - "0.28,1,va:CHAINMAIL_HELMET"
+  - "0.28,1,va:CHAINMAIL_CHESTPLATE"
+  - "0.28,1,va:CHAINMAIL_LEGGINGS"
+  - "0.28,1,va:CHAINMAIL_BOOTS"
+  - "0.28,1,va:GOLDEN_HELMET"
+  - "0.28,1,va:GOLDEN_CHESTPLATE"
+  - "0.28,1,va:GOLDEN_LEGGINGS"
+  - "0.28,1,va:GOLDEN_BOOTS"
+  - "0.18,1,va:IRON_HELMET"
+  - "0.18,1,va:IRON_CHESTPLATE"
+  - "0.18,1,va:IRON_LEGGINGS"
+  - "0.18,1,va:IRON_BOOTS"
+
+  - "0.38,1,va:IRON_SWORD"
+  - "0.38,1,va:STONE_SWORD"
+  - "0.38,1,va:GOLDEN_SWORD"
+  - "0.18,1,va:SHIELD"
+
+  - "0.06,1,wm:AK_47"
+  - "0.06,1,wm:FN_FAL"
+  - "0.06,1,wm:FR_5.56"
+  - "0.06,1,wm:M4A1"
+  - "0.06,1,wm:STG44"
+
+  - "0.18,1,wm:Stim"
+  - "0.16,1,wm:Airstrike"
+  - "0.16,1,wm:Cluster_Grenade"
+  - "0.20,1,wm:Flashbang"
+  - "0.10,2,wm:Flashbang"
+  - "0.24,1,wm:Grenade"
+  - "0.12,2,wm:Grenade"
+  - "0.16,1,wm:Semtex"
+
+  - "0.04,1,wm:MG34"
+  - "0.04,1,wm:Kar98k"
+
+  - "0.12,1,wm:Combat_Knife"
+
+  - "0.09,1,wm:50_GS"
+  - "0.09,1,wm:357_Magnum"
+
+  - "0.02,1,wm:RPG_7"
+  - "0.01,1,wm:Fatman"
+
+  - "0.04,1,wm:Origin_12"
+  - "0.04,1,wm:R9_0"
+
+  - "0.06,1,wm:AX_50"
+
+  - "0.06,1,wm:AUG"
+  - "0.06,1,wm:Uzi"
+
+  - "0.01,1,va:ENCHANTED_GOLDEN_APPLE"
+  - "0.10,1,va:GOLDEN_APPLE"
+  - "0.05,1,va:TOTEM_OF_UNDYING"

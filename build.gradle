@@ -11,6 +11,15 @@ repositories {
     maven { url = "https://repo.papermc.io/repository/maven-public/" }
     maven { url = "https://repo.codemc.org/repository/maven-public/" }
     maven { url = "https://jitpack.io/" }
+
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/WeaponMechanics/MechanicsMain")
+        credentials {
+            username = findProperty("user").toString()
+            password = findProperty("pass").toString()
+        }
+    }
 }
 
 dependencies {
@@ -26,6 +35,9 @@ dependencies {
     compileOnly "com.github.LoneDev6:API-ItemsAdder:3.5.0b"
     compileOnly "com.github.MilkBowl:VaultAPI:1.7.1"
     compileOnly "de.tr7zw:item-nbt-api-plugin:2.11.3"
+
+    compileOnly "me.deecaad:mechanicscore:+"
+    compileOnly "me.deecaad:weaponmechanics:+"
 
     implementation "com.alibaba.fastjson2:fastjson2:2.0.35"
 
