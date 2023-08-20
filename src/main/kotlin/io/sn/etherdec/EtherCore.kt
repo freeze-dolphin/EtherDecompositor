@@ -54,6 +54,9 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
         Bleeding(this).setup()
         ChestAutoStuff(this).setup()
         KillAndDrop(this).setup()
+        BasicProtection(this).setup()
+        Pager(this).setup()
+        Death(this).setup()
     }
 
     private fun setupConfig() {

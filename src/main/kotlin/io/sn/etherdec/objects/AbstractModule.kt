@@ -14,11 +14,13 @@ abstract class AbstractModule(val plug: EtherCore) : Listener {
         preSetup()
 
         // thing to do on default setup
-        plug.server.pluginManager.registerEvents(this, plug)
+        if (this is AListener) {
+            plug.logger.info("Registering listener for module: ${this.javaClass.name}")
+            plug.server.pluginManager.registerEvents(this, plug)
+        }
 
         postSetup()
     }
-
 
     @Suppress("unused")
     open fun postSetup() {

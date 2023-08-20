@@ -1,6 +1,7 @@
 package io.sn.etherdec.modules
 
 import io.sn.etherdec.EtherCore
+import io.sn.etherdec.objects.AListener
 import io.sn.etherdec.objects.AbstractModule
 import org.bukkit.Material
 import org.bukkit.entity.Monster
@@ -9,7 +10,7 @@ import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.inventory.ItemStack
 import kotlin.random.Random
 
-class KillAndDrop(plug: EtherCore) : AbstractModule(plug) {
+class KillAndDrop(plug: EtherCore) : AbstractModule(plug), AListener {
 
     @EventHandler
     fun onDeath(evt: EntityDeathEvent) {

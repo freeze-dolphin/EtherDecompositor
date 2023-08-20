@@ -1,6 +1,7 @@
 package io.sn.etherdec.modules
 
 import io.sn.etherdec.EtherCore
+import io.sn.etherdec.objects.AListener
 import io.sn.etherdec.objects.AbstractModule
 import org.bukkit.Material
 import org.bukkit.entity.EntityType
@@ -13,7 +14,7 @@ import org.bukkit.event.entity.EntitySpawnEvent
 import org.bukkit.inventory.ItemStack
 import kotlin.random.Random
 
-class MonsterOptimize(plug: EtherCore) : AbstractModule(plug) {
+class MonsterOptimize(plug: EtherCore) : AbstractModule(plug), AListener {
 
     @EventHandler
     fun onSpawn(evt: EntitySpawnEvent) {
