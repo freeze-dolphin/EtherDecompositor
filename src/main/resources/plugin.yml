@@ -11,6 +11,7 @@ depend:
   - ItemsAdder
   - Vault
   - PlaceholderAPI
+  - EmeraldBank
 
 api-version: 1.20
 

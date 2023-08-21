@@ -7,10 +7,12 @@ import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun
 import io.github.thebusybiscuit.slimefun4.implementation.items.blocks.WitherProofBlock
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils
 import io.sn.etherdec.EtherCore
+import io.sn.etherdec.objects.AListener
 import io.sn.etherdec.objects.AbstractModule
 import me.deecaad.weaponmechanics.WeaponMechanics
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock
@@ -20,10 +22,13 @@ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.block.Block
+import org.bukkit.block.Chest
+import org.bukkit.event.EventHandler
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 import kotlin.random.Random
 
-class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug) {
+class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
 
     override fun postSetup() {
         SupplyChest(
@@ -32,6 +37,22 @@ class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug) {
             type,
             nullRecipe
         ).register(plug)
+    }
+
+    @EventHandler
+    fun convert(evt: PlayerInteractEvent) {
+        if (evt.hasBlock()) {
+            val bl = evt.clickedBlock
+            if (bl?.type == Material.CHEST) {
+                if (bl.world.name in arrayOf("san_andreas", "greenfield")) {
+                    val ch = bl.state as Chest
+                    if (ch.inventory.size == 27) {
+                        Slimefun.getDatabaseManager().blockDataController.createBlock(bl.location, "ETHERITE_SUPPLY_CHEST")
+                        evt.isCancelled = true
+                    }
+                }
+            }
+        }
     }
 
     class SupplyChest(
