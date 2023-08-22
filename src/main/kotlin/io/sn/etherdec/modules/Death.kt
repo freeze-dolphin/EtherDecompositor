@@ -26,6 +26,9 @@ class Death(plug: EtherCore) : AbstractModule(plug), AListener {
                 })
             )
         }
+        
+        if (evt.player.world.name == "world") return
+
         val rnd = Random.nextInt(10, 32).toDouble()
         val acc = Balance.balance(evt.player)
         val droped = min(rnd, acc)
