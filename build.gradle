@@ -31,7 +31,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     compileOnly "io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT"
-    compileOnly "com.github.HAPPYLAND-Dev:Slimefun4:87a9e0bace"
+    compileOnly "com.github.HAPPYLAND-Dev:Slimefun4:063146262b"
     compileOnly "dev.jorel:commandapi-bukkit-core:9.0.3"
     compileOnly "com.github.LoneDev6:API-ItemsAdder:3.5.0b"
     compileOnly "com.github.MilkBowl:VaultAPI:1.7.1"
@@ -44,6 +44,7 @@ dependencies {
     compileOnly "me.deecaad:weaponmechanics:+"
 
     implementation "com.alibaba.fastjson2:fastjson2:2.0.35"
+    implementation 'nl.vv32.rcon:rcon:1.2.0'
 
 }
 

@@ -18,3 +18,4 @@ api-version: 1.20
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:1.8.20
   - com.alibaba.fastjson2:fastjson2:2.0.35
+  - nl.vv32.rcon:rcon:1.2.0

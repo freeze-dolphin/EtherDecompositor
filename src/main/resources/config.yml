@@ -3,6 +3,13 @@ fill-delay: 1200
 immediate-fill-chance: 0.1
 fill-try-times: "6,8"
 
+rcon:
+  host: ""
+  port: 12345
+  passwd: ""
+
+exchange-rate: 10
+
 loot-table:
   - "0.58,2,va:COOKED_BEEF"
   - "0.58,2,va:COOKED_CHICKEN"

@@ -29,6 +29,7 @@ class Death(plug: EtherCore) : AbstractModule(plug), AListener {
         val rnd = Random.nextInt(10, 32).toDouble()
         val acc = Balance.balance(evt.player)
         val droped = min(rnd, acc)
+        if (droped < 1) return
         Balance.remove(evt.player, droped)
         evt.player.sendMessage(EtherCore.minid("<dark_gray>[<red>喜报<dark_gray>] <white>你因为死亡丢失了 <green>${droped} <dark_green>E"))
     }

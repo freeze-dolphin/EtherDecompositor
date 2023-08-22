@@ -10,8 +10,11 @@ import dev.jorel.commandapi.executors.CommandExecutor
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import io.sn.etherdec.EtherCore
 import io.sn.etherdec.objects.AbstractModule
+import nl.vv32.rcon.Rcon
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import java.io.IOException
+
 
 class Command(plug: EtherCore) : AbstractModule(plug) {
 
@@ -73,6 +76,26 @@ class Command(plug: EtherCore) : AbstractModule(plug) {
                     val player = args[0] as Player
                     val amount = args[1] as String
                     if (amount == "all") Balance.convertAll(player, player) else Balance.convert(player, player)
+                })
+        ).withSubcommand(
+            CommandAPICommand("convert").withPermission(CommandPermission.OP)
+                .withArguments(PlayerArgument("player")).executes(CommandExecutor { _, args ->
+                    val player = args[0] as Player
+
+                    try {
+                        Rcon.open(plug.config.getString("rcon.host"), plug.config.getInt("rcon.port")).use { rcon ->
+                            if (rcon.authenticate(plug.config.getString("rcon.passwd"))) {
+                                val actual = 1152 / plug.config.getDouble("exchange-rate", 10.0)
+                                plug.logger.info(rcon.sendCommand("offlinepay ${player.name} $actual"))
+                                Balance.remove(player, 1152.0)
+                                plug.logger.info("Transaction completed: ${player.name} yetzirah 1152 -> assiash $actual")
+                            } else {
+                                plug.logger.severe("Failed to authenticate")
+                            }
+                        }
+                    } catch (ioe: IOException) {
+                        plug.logger.warning("Failed due to IOException, maybe not connected to Internet")
+                    }
                 })
         ).withSubcommand(
             CommandAPICommand("reload").withPermission(CommandPermission.OP).executes(CommandExecutor { _, _ ->

@@ -7,7 +7,7 @@ import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun.getDatabaseManager
 import io.github.thebusybiscuit.slimefun4.implementation.items.blocks.WitherProofBlock
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils
@@ -45,9 +45,10 @@ class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
             val bl = evt.clickedBlock
             if (bl?.type == Material.CHEST) {
                 if (bl.world.name in arrayOf("san_andreas", "greenfield")) {
+                    if (StorageCacheUtils.hasBlock(bl.location)) return
                     val ch = bl.state as Chest
                     if (ch.inventory.size == 27) {
-                        Slimefun.getDatabaseManager().blockDataController.createBlock(bl.location, "ETHERITE_SUPPLY_CHEST")
+                        getDatabaseManager().getBlockDataController(bl.world).createBlock(bl.location, "ETHERITE_SUPPLY_CHEST")
                         evt.isCancelled = true
                     }
                 }
