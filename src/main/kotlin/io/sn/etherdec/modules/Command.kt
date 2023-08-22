@@ -3,9 +3,9 @@ package io.sn.etherdec.modules
 import com.spawnchunk.emeraldbank.modules.Balance
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.CommandPermission
+import dev.jorel.commandapi.arguments.GreedyStringArgument
 import dev.jorel.commandapi.arguments.PlayerArgument
 import dev.jorel.commandapi.arguments.StringArgument
-import dev.jorel.commandapi.arguments.TextArgument
 import dev.jorel.commandapi.executors.CommandExecutor
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import io.sn.etherdec.EtherCore
@@ -51,7 +51,8 @@ class Command(plug: EtherCore) : AbstractModule(plug) {
                     sender.openInventory(player.enderChest)
                 })
         ).withSubcommand(
-            CommandAPICommand("sudo").withPermission(CommandPermission.OP).withArguments(PlayerArgument("player"), TextArgument("command"))
+            CommandAPICommand("sudo").withPermission(CommandPermission.OP)
+                .withArguments(PlayerArgument("player"), GreedyStringArgument("command"))
                 .executes(CommandExecutor { _, args ->
                     val player = args[0] as Player
                     val command = args[1] as String
@@ -86,7 +87,8 @@ class Command(plug: EtherCore) : AbstractModule(plug) {
                         Rcon.open(plug.config.getString("rcon.host"), plug.config.getInt("rcon.port")).use { rcon ->
                             if (rcon.authenticate(plug.config.getString("rcon.passwd"))) {
                                 val actual = 1152 / plug.config.getDouble("exchange-rate", 10.0)
-                                plug.logger.info(rcon.sendCommand("offlinepay ${player.name} $actual"))
+                                val echo = rcon.sendCommand("offlinepay ${player.name} $actual")
+                                if (echo.isNotEmpty()) plug.logger.info(echo)
                                 Balance.remove(player, 1152.0)
                                 plug.logger.info("Transaction completed: ${player.name} yetzirah 1152 -> assiash $actual")
                             } else {
