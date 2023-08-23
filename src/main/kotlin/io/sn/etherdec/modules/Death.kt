@@ -11,7 +11,6 @@ import org.bukkit.event.entity.PlayerDeathEvent
 import kotlin.math.min
 import kotlin.random.Random
 
-
 class Death(plug: EtherCore) : AbstractModule(plug), AListener {
 
     @EventHandler
@@ -21,12 +20,12 @@ class Death(plug: EtherCore) : AbstractModule(plug), AListener {
             evt.deathMessage(
                 EtherCore.minid(
                     "<dark_gray>[<red>喜报<dark_gray>] <reset><white>"
-                ).append(it.replaceText {
-                    it.match(evt.player.name).replacement(" ${evt.player.name} ")
+                ).append(it.replaceText { txt ->
+                    txt.match(evt.player.name).replacement(" ${evt.player.name} ")
                 })
             )
         }
-        
+
         if (evt.player.world.name == "world") return
 
         val rnd = Random.nextInt(10, 32).toDouble()
@@ -36,4 +35,5 @@ class Death(plug: EtherCore) : AbstractModule(plug), AListener {
         Balance.remove(evt.player, droped)
         evt.player.sendMessage(EtherCore.minid("<dark_gray>[<red>喜报<dark_gray>] <white>你因为死亡丢失了 <green>${droped} <dark_green>E"))
     }
+
 }

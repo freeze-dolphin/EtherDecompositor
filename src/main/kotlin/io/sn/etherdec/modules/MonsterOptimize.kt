@@ -22,7 +22,6 @@ class MonsterOptimize(plug: EtherCore) : AbstractModule(plug), AListener {
         if (evt.entity.shooter is Skeleton) {
             if (evt.entity is Arrow) {
                 val arr = evt.entity as Arrow
-                arr.damage = Random.nextDouble(3.0, 6.0)
                 if (Random.nextDouble() < 0.4) arr.addCustomEffect(PotionEffect(PotionEffectType.POISON, Random.nextInt(80, 120), 1), true)
             }
         }
@@ -30,34 +29,70 @@ class MonsterOptimize(plug: EtherCore) : AbstractModule(plug), AListener {
 
     @EventHandler
     fun onSpawn(evt: EntitySpawnEvent) {
-        if (evt.entity.entitySpawnReason == CreatureSpawnEvent.SpawnReason.NATURAL && evt.entity is Monster && evt.entityType != EntityType.ZOMBIE) {
+        if (evt.entity.entitySpawnReason == CreatureSpawnEvent.SpawnReason.NATURAL && evt.entity is Monster) {
             evt.isCancelled = true
-            if (Random.nextDouble() > 0.05) {
-                evt.entity.world.spawnEntity(evt.location, EntityType.ZOMBIE, CreatureSpawnEvent.SpawnReason.DEFAULT) {
-                    val ety = it as Zombie
-                    Random.nextInt(1, 200).let { rnd ->
-                        when (rnd) {
-                            in 1 until 50 -> equipEntityWith(ety, Material.LEATHER)
-                            in 50 until 75 -> equipEntityWith(ety, Material.GOLD_INGOT)
-                            in 75 until 80 -> equipEntityWith(ety, Material.CHAIN)
-                            in 80 until 95 -> equipEntityWith(ety, Material.IRON_INGOT)
-                            in 95..100 -> equipEntityWith(ety, Material.DIAMOND)
-                            else -> return@let
+
+            if (evt.location.world.name != "san_andreas") return // disable mob spawn except `san_andreas`
+
+            if (evt.location.world.isDayTime) return // spawning monsters in daytime is not allowed
+
+            if (Random.nextDouble() > plug.config.getDouble("monster-spawn-rate", 0.5)) return
+
+            val etype: EntityType
+            val rnd = Random.nextDouble()
+
+            val underType = evt.location.apply {
+                y -= 1.0
+            }.block.type.name
+
+            if (rnd < plug.config.getDouble("skeleton-spawn-rate", 0.005)) {
+                etype = if (underType.contains(Regex(".*ICE.*"))) {
+                    EntityType.STRAY
+                } else {
+                    EntityType.SKELETON
+                }
+            } else if (rnd < plug.config.getDouble("phantom-spawn-rate", 0.08)) {
+                etype = EntityType.PHANTOM
+            } else {
+                if (Random.nextDouble() < plug.config.getDouble("zombie-spawn-decreaser-rate", 0.5)) return
+
+                etype = if (underType.contains(Regex(".*SAND.*"))) {
+                    EntityType.HUSK
+                } else if (evt.location.block.type.name.contains(Regex(".*WATER.*"))) {
+                    EntityType.DROWNED
+                } else {
+                    EntityType.ZOMBIE
+                }
+            }
+            evt.entity.world.spawnEntity(evt.location.apply {
+                if (etype == EntityType.PHANTOM) {
+                    y += 20.0
+                }
+            }, etype, CreatureSpawnEvent.SpawnReason.DEFAULT) {
+                val ety = it as Mob
+                Random.nextInt(1, 200).let { rnd ->
+                    when (rnd) {
+                        in 1 until 50 -> equipEntityWith(ety, Material.LEATHER)
+                        in 50 until 75 -> equipEntityWith(ety, Material.GOLD_INGOT)
+                        in 75 until 80 -> equipEntityWith(ety, Material.CHAIN)
+                        in 80 until 95 -> equipEntityWith(ety, Material.IRON_INGOT)
+                        in 95..100 -> equipEntityWith(ety, Material.DIAMOND)
+                        else -> return@let
+                    }
+                }
+                if (ety.equipment.helmet.type == Material.AIR && ety.equipment.chestplate.type == Material.AIR && ety.equipment.leggings.type == Material.AIR && ety.equipment.boots.type == Material.AIR) {
+                    if (Random.nextDouble() < plug.config.getDouble("assassin-zombie-spawn-rate", 0.1)) {
+                        ety.equipment.setItemInMainHand(ItemStack(Material.DIAMOND_SWORD))
+                        if (Random.nextDouble() < plug.config.getDouble("assassin-zombie-speed-rate", 0.5)) {
+                            ety.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 3600, Random.nextInt(1, 2)))
                         }
                     }
                 }
-            } else {
-                evt.entity.world.spawnEntity(evt.location, EntityType.SKELETON, CreatureSpawnEvent.SpawnReason.DEFAULT) {
-                    val ety = it as Skeleton
-                    Random.nextInt(1, 200).let { rnd ->
-                        when (rnd) {
-                            in 1 until 50 -> equipEntityWith(ety, Material.LEATHER)
-                            in 50 until 75 -> equipEntityWith(ety, Material.GOLD_INGOT)
-                            in 75 until 80 -> equipEntityWith(ety, Material.CHAIN)
-                            in 80 until 95 -> equipEntityWith(ety, Material.IRON_INGOT)
-                            in 95..100 -> equipEntityWith(ety, Material.DIAMOND)
-                            else -> return@let
-                        }
+
+                if (ety is Phantom) {
+                    ety.target = ety.location.getNearbyPlayers(plug.config.getDouble("phantom-view-radius", 50.0)).let { nearBy ->
+                        if (nearBy.isEmpty()) return@spawnEntity
+                        nearBy.elementAt(0)
                     }
                 }
             }

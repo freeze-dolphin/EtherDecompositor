@@ -150,8 +150,10 @@ class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
                         }
 
                         else -> null
-                    }?.apply {
-                        setAmount(amount.toInt())
+                    }?.let { fi ->
+                        fi.clone().apply {
+                            setAmount(amount.toInt())
+                        }
                     }
                 }
             }

@@ -19,6 +19,33 @@ import java.io.IOException
 class Command(plug: EtherCore) : AbstractModule(plug) {
 
     override fun postSetup() {
+        CommandAPICommand("sudo").withPermission(CommandPermission.OP)
+            .withArguments(PlayerArgument("player"), GreedyStringArgument("command"))
+            .executes(CommandExecutor { _, args ->
+                val player = args[0] as Player
+                val command = args[1] as String
+
+                if (command.startsWith("c:")) {
+                    player.chat(command.split("c:")[1])
+                } else {
+                    player.performCommand(command)
+                }
+            }).register()
+
+        CommandAPICommand("invsee").withAliases("inv").withPermission(CommandPermission.OP).withArguments(PlayerArgument("player"))
+            .executesPlayer(PlayerCommandExecutor { sender, args ->
+                val player = args[0] as Player
+
+                sender.openInventory(player.inventory)
+            }).register()
+
+        CommandAPICommand("enderchest").withAliases("ec").withPermission(CommandPermission.OP).withArguments(PlayerArgument("player"))
+            .executesPlayer(PlayerCommandExecutor { sender, args ->
+                val player = args[0] as Player
+
+                sender.openInventory(player.enderChest)
+            }).register()
+
         CommandAPICommand("ether").withPermission(CommandPermission.OP).withAliases("eth", "et").withSubcommand(
             CommandAPICommand("dump").withArguments(StringArgument("id")).withPermission(CommandPermission.OP)
                 .executesPlayer(PlayerCommandExecutor { sender, args ->
@@ -34,33 +61,6 @@ class Command(plug: EtherCore) : AbstractModule(plug) {
                         } else {
                             plug.dumpedItems.set(id, hand)
                         }
-                    }
-                })
-        ).withSubcommand(
-            CommandAPICommand("inv").withPermission(CommandPermission.OP).withArguments(PlayerArgument("player"))
-                .executesPlayer(PlayerCommandExecutor { sender, args ->
-                    val player = args[0] as Player
-
-                    sender.openInventory(player.inventory)
-                })
-        ).withSubcommand(
-            CommandAPICommand("ec").withPermission(CommandPermission.OP).withArguments(PlayerArgument("player"))
-                .executesPlayer(PlayerCommandExecutor { sender, args ->
-                    val player = args[0] as Player
-
-                    sender.openInventory(player.enderChest)
-                })
-        ).withSubcommand(
-            CommandAPICommand("sudo").withPermission(CommandPermission.OP)
-                .withArguments(PlayerArgument("player"), GreedyStringArgument("command"))
-                .executes(CommandExecutor { _, args ->
-                    val player = args[0] as Player
-                    val command = args[1] as String
-
-                    if (command.startsWith("c:")) {
-                        player.chat(command.split("c:")[1])
-                    } else {
-                        player.performCommand(command)
                     }
                 })
         ).withSubcommand(

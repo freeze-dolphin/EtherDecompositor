@@ -9,6 +9,7 @@ import org.bukkit.attribute.Attribute
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageEvent
+import kotlin.math.max
 
 class Bleeding(plug: EtherCore) : AbstractModule(plug), AListener {
 
@@ -16,7 +17,7 @@ class Bleeding(plug: EtherCore) : AbstractModule(plug), AListener {
         Bukkit.getScheduler().runTaskTimer(plug, Runnable {
             plug.server.onlinePlayers.forEach {
                 val ratio = it.health / it.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue
-                it.freezeTicks = ((1 - ratio) * it.maxFreezeTicks).toInt()
+                it.freezeTicks = max(0, ((1 - ratio) * it.maxFreezeTicks).toInt())
             }
         }, 0L, 1L)
     }
