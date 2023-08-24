@@ -44,7 +44,7 @@ class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
         if (evt.hasBlock()) {
             val bl = evt.clickedBlock
             if (bl?.type == Material.CHEST) {
-                if (bl.world.name in arrayOf("san_andreas", "greenfield")) {
+                if (bl.world.name in plug.config.getStringList("filling.auto-convert-enabled-worlds")) {
                     if (StorageCacheUtils.hasBlock(bl.location)) return
                     val ch = bl.state as Chest
                     if (ch.inventory.size == 27) {
