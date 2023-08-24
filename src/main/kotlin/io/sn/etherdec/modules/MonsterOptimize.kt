@@ -32,7 +32,7 @@ class MonsterOptimize(plug: EtherCore) : AbstractModule(plug), AListener {
         if (evt.entity.entitySpawnReason == CreatureSpawnEvent.SpawnReason.NATURAL && evt.entity is Monster) {
             evt.isCancelled = true
 
-            if (evt.location.world.name != "san_andreas") return // disable mob spawn except `san_andreas`
+            if (evt.location.world.name !in plug.config.getStringList("mob-spawning.applied-worlds")) return // disable mob spawn except enabled worlds`
 
             if (evt.location.world.isDayTime) return // spawning monsters in daytime is not allowed
 
