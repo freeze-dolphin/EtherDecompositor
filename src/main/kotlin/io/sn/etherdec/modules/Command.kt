@@ -11,7 +11,9 @@ import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import io.sn.etherdec.EtherCore
 import io.sn.etherdec.objects.AbstractModule
 import nl.vv32.rcon.Rcon
+import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import java.io.IOException
 
@@ -44,6 +46,15 @@ class Command(plug: EtherCore) : AbstractModule(plug) {
                 val player = args[0] as Player
 
                 sender.openInventory(player.enderChest)
+            }).register()
+        CommandAPICommand("logging").withAliases("log").withPermission(CommandPermission.OP).withArguments(GreedyStringArgument("info"))
+            .executes(CommandExecutor { sender, args ->
+                val info = args[0] as String
+
+                if (sender !is ConsoleCommandSender) {
+                    sender.sendMessage(EtherCore.minid("<dark_gray>[<yellow>日志<dark_gray>] <white>信息已记录到控制台: <yellow>$info"))
+                }
+                Bukkit.getConsoleSender().sendMessage(info)
             }).register()
 
         CommandAPICommand("ether").withPermission(CommandPermission.OP).withAliases("eth", "et").withSubcommand(

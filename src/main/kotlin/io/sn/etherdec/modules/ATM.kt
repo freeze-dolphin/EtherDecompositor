@@ -41,10 +41,11 @@ class ATM(plug: EtherCore) : AbstractModule(plug) {
     class ATMBlock(plug: EtherCore, item: SlimefunItemStack, type: RecipeType, recipe: Array<ItemStack?>) :
         SlimefunItem(plug.group, item, type, recipe), InventoryBlock {
 
-        private val border = intArrayOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 17, 18, 22, 26, 27, 31, 35, 36, 37, 39, 40, 41, 43, 44)
+        private val border = intArrayOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 17, 18, 26, 27, 31, 35, 36, 37, 39, 40, 41, 43, 44)
 
         private val withdrawSlot = 42
         private val infoSlot = 38
+        private val warnSlot = 22
 
         private val borderItem = CustomItemStack(Material.GRAY_STAINED_GLASS_PANE, " ").setCustomModel(4000)
 
@@ -122,6 +123,7 @@ class ATM(plug: EtherCore) : AbstractModule(plug) {
             }
             preset.addItem(withdrawSlot, borderItem) { _, _, _, _ -> false }
             preset.addItem(infoSlot, borderItem) { _, _, _, _ -> false }
+            preset.addItem(warnSlot, borderItem) { _, _, _, _ -> false }
         }
 
         override fun preRegister() {
@@ -138,6 +140,21 @@ class ATM(plug: EtherCore) : AbstractModule(plug) {
 
         fun tick(b: Block) {
             val inv = StorageCacheUtils.getMenu(b.location) ?: return
+
+            if (inv.toInventory().viewers.size > 1) {
+                (inputSlots + outputSlots).forEach {
+                    inv.addMenuClickHandler(it) { _, _, _, _ -> false }
+                    inv.replaceExistingItem(
+                        warnSlot,
+                        CustomItemStack(Material.BARRIER, "&c警告&r", "", "&f当前打开容器的人不止你自己", "&f已经禁止此 ATM 内的物品移动")
+                    )
+                }
+            } else {
+                (inputSlots + outputSlots).forEach {
+                    inv.addMenuClickHandler(it) { _, _, _, _ -> true }
+                    inv.replaceExistingItem(warnSlot, borderItem)
+                }
+            }
 
             val near = b.location.getNearbyPlayers(1.0)
             if (near.size != 1) {

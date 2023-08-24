@@ -36,7 +36,7 @@ class MonsterOptimize(plug: EtherCore) : AbstractModule(plug), AListener {
 
             if (evt.location.world.isDayTime) return // spawning monsters in daytime is not allowed
 
-            if (Random.nextDouble() > plug.config.getDouble("monster-spawn-rate", 0.5)) return
+            if (Random.nextDouble() > plug.config.getDouble("mob-spawning.monster-spawn-rate", 0.5)) return
 
             val etype: EntityType
             val rnd = Random.nextDouble()
@@ -45,16 +45,16 @@ class MonsterOptimize(plug: EtherCore) : AbstractModule(plug), AListener {
                 y -= 1.0
             }.block.type.name
 
-            if (rnd < plug.config.getDouble("skeleton-spawn-rate", 0.005)) {
+            if (rnd < plug.config.getDouble("mob-spawning.skeleton-spawn-rate", 0.005)) {
                 etype = if (underType.contains(Regex(".*ICE.*"))) {
                     EntityType.STRAY
                 } else {
                     EntityType.SKELETON
                 }
-            } else if (rnd < plug.config.getDouble("phantom-spawn-rate", 0.08)) {
+            } else if (rnd < plug.config.getDouble("mob-spawning.phantom-spawn-rate", 0.08)) {
                 etype = EntityType.PHANTOM
             } else {
-                if (Random.nextDouble() < plug.config.getDouble("zombie-spawn-decreaser-rate", 0.5)) return
+                if (Random.nextDouble() < plug.config.getDouble("mob-spawning.zombie-spawn-decreaser-rate", 0.5)) return
 
                 etype = if (underType.contains(Regex(".*SAND.*"))) {
                     EntityType.HUSK
@@ -81,16 +81,16 @@ class MonsterOptimize(plug: EtherCore) : AbstractModule(plug), AListener {
                     }
                 }
                 if (ety.equipment.helmet.type == Material.AIR && ety.equipment.chestplate.type == Material.AIR && ety.equipment.leggings.type == Material.AIR && ety.equipment.boots.type == Material.AIR) {
-                    if (Random.nextDouble() < plug.config.getDouble("assassin-zombie-spawn-rate", 0.1)) {
+                    if (Random.nextDouble() < plug.config.getDouble("mob-spawning.assassin-zombie-spawn-rate", 0.1)) {
                         ety.equipment.setItemInMainHand(ItemStack(Material.DIAMOND_SWORD))
-                        if (Random.nextDouble() < plug.config.getDouble("assassin-zombie-speed-rate", 0.5)) {
+                        if (Random.nextDouble() < plug.config.getDouble("mob-spawning.assassin-zombie-speed-rate", 0.5)) {
                             ety.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 3600, Random.nextInt(1, 2)))
                         }
                     }
                 }
 
                 if (ety is Phantom) {
-                    ety.target = ety.location.getNearbyPlayers(plug.config.getDouble("phantom-view-radius", 50.0)).let { nearBy ->
+                    ety.target = ety.location.getNearbyPlayers(plug.config.getDouble("mob-spawning.phantom-view-radius", 50.0)).let { nearBy ->
                         if (nearBy.isEmpty()) return@spawnEntity
                         nearBy.elementAt(0)
                     }

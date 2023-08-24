@@ -1,6 +1,5 @@
 prefix: "<dark_gray>[<color:#FFDAB9>系统<dark_gray>] "
 fill-delay: 1200
-immediate-fill-chance: 0.1
 fill-try-times: "6,8"
 
 rcon:

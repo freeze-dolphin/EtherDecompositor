@@ -107,7 +107,7 @@ class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
             inv.setPlayerInventoryClickable(true)
 
             if (inv.toInventory().isEmpty) {
-                if (internalTick > plug.config.getLong("fill-delay")) {
+                if (internalTick > plug.config.getLong("filling.fill-delay")) {
                     internalTick = 0
                     fillChest(inv)
                     return
@@ -117,7 +117,7 @@ class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
         }
 
         private fun fillChest(inv: BlockMenu) {
-            val (from, until) = plug.config.getString("fill-try-times", "6,8")!!.split(",").map { it.toInt() }
+            val (from, until) = plug.config.getString("filling.fill-try-times", "6,8")!!.split(",").map { it.toInt() }
             repeat(Random.nextInt(from, until)) {
                 val size = inv.toInventory().size
                 inv.apply {
@@ -127,7 +127,7 @@ class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
         }
 
         private fun nextLoot(): ItemStack? {
-            val lootTable = plug.config.getStringList("loot-table")
+            val lootTable = plug.config.getStringList("filling.loot-table")
             lootTable[Random.nextInt(lootTable.size)].let {
                 val (chance, amount, itemId) = it.split(",")
                 if (Random.nextDouble(1.0) < chance.toDouble()) {

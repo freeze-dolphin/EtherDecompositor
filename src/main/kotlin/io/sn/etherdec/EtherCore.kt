@@ -58,6 +58,7 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
         Pager(this).setup()
         Death(this).setup()
         ATM(this).setup()
+        BasicAntiCheat(this).setup()
     }
 
     private fun setupConfig() {
