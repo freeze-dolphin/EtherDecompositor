@@ -3,6 +3,7 @@ package io.sn.etherdec.modules
 import io.sn.etherdec.EtherCore
 import io.sn.etherdec.objects.AListener
 import io.sn.etherdec.objects.AbstractModule
+import org.bukkit.Material
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerInteractEvent
@@ -20,7 +21,9 @@ class BasicAntiCheat(plug: EtherCore) : AbstractModule(plug), AListener {
 
         if (evt.hasBlock()) {
             val blk = evt.clickedBlock
-            val point2 = blk!!.location.toCenterLocation()
+            if (blk!!.type != Material.PLAYER_HEAD && blk.type != Material.PLAYER_WALL_HEAD) return
+
+            val point2 = blk.location.toCenterLocation()
             val point1 = evt.player.eyeLocation
 
             val space = 0.5
