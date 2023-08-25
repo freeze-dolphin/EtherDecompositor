@@ -18,6 +18,7 @@ import java.util.*
 import kotlin.io.path.Path
 import kotlin.math.sqrt
 
+@Deprecated("没用罢了")
 class TrackerCompass(plug: EtherCore) : AbstractModule(plug), AListener {
 
     private val stack = SlimefunItemStack(

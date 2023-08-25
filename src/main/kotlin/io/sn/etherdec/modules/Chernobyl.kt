@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
+@Deprecated("没用罢了")
 class Chernobyl(plug: EtherCore) : AbstractModule(plug), AListener {
 
     override fun postSetup() {

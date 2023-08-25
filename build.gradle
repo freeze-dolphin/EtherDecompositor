@@ -40,7 +40,7 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.11.3'
     compileOnly 'net.luckperms:api:5.4'
     compileOnly 'com.comphenix.protocol:ProtocolLib:5.1.0'
-    compileOnly files("libs/EmeraldBank-1.20-2.1.jar", "libs/paper-1.20.1.jar")
+    compileOnly files("libs/EmeraldBank-1.20-2.1.jar")
 
     compileOnly "me.deecaad:mechanicscore:+"
     compileOnly "me.deecaad:weaponmechanics:+"
