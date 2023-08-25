@@ -59,6 +59,8 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
         Death(this).setup()
         ATM(this).setup()
         BasicAntiCheat(this).setup()
+        TrackerCompass(this).setup()
+        Chernobyl(this).setup()
     }
 
     private fun setupConfig() {

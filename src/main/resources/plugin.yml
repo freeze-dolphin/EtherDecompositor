@@ -10,6 +10,7 @@ depend:
   - NBTAPI
   - ItemsAdder
   - Vault
+  - ProtocolLib
   - PlaceholderAPI
   - EmeraldBank
 

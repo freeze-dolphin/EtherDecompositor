@@ -8,3 +8,5 @@ upload:
 
 clean:
 	gradle clean
+
+.PHONY: build upload clean

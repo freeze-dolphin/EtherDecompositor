@@ -1,1 +1,30 @@
 package io.sn.etherdec
+
+import org.bukkit.Bukkit
+import org.bukkit.Location
+import org.bukkit.configuration.ConfigurationSection
+import org.bukkit.util.Vector
+import java.util.concurrent.TimeUnit
+
+fun vecAscend(plug: EtherCore, point1: Location, point2: Location, space: Double, delay: Long = 0L, func: (Vector) -> Unit) {
+    val distance: Double = point1.distance(point2)
+    val p1: Vector = point1.toVector()
+    val p2: Vector = point2.toVector()
+    val vector: Vector = p2.clone().subtract(p1).normalize().multiply(space)
+    var length = 0.0
+    while (length < distance) {
+        Bukkit.getAsyncScheduler().runDelayed(plug, {
+            func.invoke(p1)
+            length += space
+            p1.add(vector)
+        }, delay, TimeUnit.MILLISECONDS)
+    }
+}
+
+fun scheduleTimer(plug: EtherCore, period: Long, runnable: Runnable) = Bukkit.getScheduler().runTaskTimer(plug, runnable, 0L, period)
+
+tailrec fun findLastNewIndex(current: Int, yml: ConfigurationSection): Int = if (yml.contains(current.toString())) {
+    findLastNewIndex(current + 1, yml)
+} else {
+    current
+}
