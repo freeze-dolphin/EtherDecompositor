@@ -17,6 +17,8 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
 
     lateinit var dumpedItems: YamlConfiguration
 
+    val dpFile = File(dataFolder.path + File.separator + "dumped.yml")
+
     companion object {
         private const val DEFAULT_PREFIX = "<dark_gray>[<color:#FFDAB9>系统<dark_gray>] "
         private val mini: MiniMessage = MiniMessage.miniMessage()
@@ -61,11 +63,12 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
         BasicAntiCheat(this).setup()
         // TrackerCompass(this).setup()
         // Chernobyl(this).setup()
+        SoulboundItemsList(this).setup()
     }
 
     private fun setupConfig() {
         saveDefaultConfig()
-        val dpFile = File(dataFolder.path + File.separator + "dumped.yml")
+        if (!dpFile.exists()) dpFile.createNewFile()
         dumpedItems = YamlConfiguration.loadConfiguration(dpFile)
     }
 

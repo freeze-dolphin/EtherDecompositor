@@ -4,6 +4,7 @@ import com.spawnchunk.emeraldbank.modules.Balance
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.CommandPermission
 import dev.jorel.commandapi.arguments.GreedyStringArgument
+import dev.jorel.commandapi.arguments.IntegerArgument
 import dev.jorel.commandapi.arguments.PlayerArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.executors.CommandExecutor
@@ -22,8 +23,7 @@ class Command(plug: EtherCore) : AbstractModule(plug) {
 
     override fun postSetup() {
         CommandAPICommand("sudo").withPermission(CommandPermission.OP)
-            .withArguments(PlayerArgument("player"), GreedyStringArgument("command"))
-            .executes(CommandExecutor { _, args ->
+            .withArguments(PlayerArgument("player"), GreedyStringArgument("command")).executes(CommandExecutor { _, args ->
                 val player = args[0] as Player
                 val command = args[1] as String
 
@@ -71,6 +71,7 @@ class Command(plug: EtherCore) : AbstractModule(plug) {
                             plug.sendMsg(sender, "<red>你必须拿着一个物品才能执行记录")
                         } else {
                             plug.dumpedItems.set(id, hand)
+                            plug.dumpedItems.save(plug.dpFile)
                         }
                     }
                 })
@@ -90,8 +91,8 @@ class Command(plug: EtherCore) : AbstractModule(plug) {
                     if (amount == "all") Balance.convertAll(player, player) else Balance.convert(player, player)
                 })
         ).withSubcommand(
-            CommandAPICommand("convert").withPermission(CommandPermission.OP)
-                .withArguments(PlayerArgument("player")).executes(CommandExecutor { _, args ->
+            CommandAPICommand("convert").withPermission(CommandPermission.OP).withArguments(PlayerArgument("player"))
+                .executes(CommandExecutor { _, args ->
                     val player = args[0] as Player
 
                     try {
@@ -109,6 +110,14 @@ class Command(plug: EtherCore) : AbstractModule(plug) {
                     } catch (ioe: IOException) {
                         plug.logger.warning("Failed due to IOException, maybe not connected to Internet")
                     }
+                })
+        ).withSubcommand(
+            CommandAPICommand("bankadd").withPermission(CommandPermission.OP)
+                .withArguments(PlayerArgument("player"), IntegerArgument("number")).executes(CommandExecutor { _, args ->
+                    val plr = args[0] as Player
+                    val amount = args[1] as Int
+
+                    Balance.add(plr, amount.toDouble())
                 })
         ).withSubcommand(
             CommandAPICommand("reload").withPermission(CommandPermission.OP).executes(CommandExecutor { _, _ ->
