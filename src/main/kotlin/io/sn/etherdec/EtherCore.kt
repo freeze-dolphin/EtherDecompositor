@@ -1,10 +1,13 @@
 package io.sn.etherdec
 
+import com.comphenix.protocol.ProtocolLibrary
+import com.comphenix.protocol.ProtocolManager
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack
 import io.sn.etherdec.modules.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.serializer.json.JSONComponentSerializer
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -23,9 +26,13 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
         private const val DEFAULT_PREFIX = "<dark_gray>[<color:#FFDAB9>系统<dark_gray>] "
         private val mini: MiniMessage = MiniMessage.miniMessage()
         private val plain: PlainTextComponentSerializer = PlainTextComponentSerializer.plainText()
+        private val jsons: JSONComponentSerializer = JSONComponentSerializer.json()
+
+        lateinit var ptMan: ProtocolManager
 
         fun minid(s: String): Component = mini.deserialize(s)
         fun plains(s: Component): String = plain.serialize(s)
+        fun jsond(jsonStr: String): Component = jsons.deserialize(jsonStr)
     }
 
     val group = ItemGroup(
@@ -46,6 +53,8 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
     override fun onEnable() {
         logger.info("`Ether Decompisitor` is ready in sit. ;)")
 
+        ptMan = ProtocolLibrary.getProtocolManager()
+
         setupConfig()
         setupModules()
     }
@@ -64,6 +73,7 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
         // TrackerCompass(this).setup()
         // Chernobyl(this).setup()
         SoulboundItemsList(this).setup()
+        ProtocolModifier(this).setup()
     }
 
     private fun setupConfig() {

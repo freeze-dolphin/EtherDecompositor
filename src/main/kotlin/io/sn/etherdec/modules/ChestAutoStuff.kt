@@ -146,20 +146,21 @@ class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
         }
 
         private fun fillChest(inv: BlockMenu) {
+            val bonus = if (inv.block.world.name == "chernobyl") plug.config.getDouble("chernobyl.filling-bonus") else 0.0
             val (from, until) = plug.config.getString("filling.fill-try-times", "6,8")!!.split(",").map { it.toInt() }
             repeat(Random.nextInt(from, until)) {
                 val size = inv.toInventory().size
                 inv.apply {
-                    replaceExistingItem(Random.nextInt(0, size), nextLoot())
+                    replaceExistingItem(Random.nextInt(0, size), nextLoot(bonus))
                 }
             }
         }
 
-        private fun nextLoot(): ItemStack? {
+        private fun nextLoot(bonus: Double): ItemStack? {
             val lootTable = plug.config.getStringList("filling.loot-table")
             lootTable[Random.nextInt(lootTable.size)].let {
                 val (chance, amount, itemId) = it.split(",")
-                if (Random.nextDouble(1.0) < chance.toDouble()) {
+                if (Random.nextDouble(1.0) < chance.toDouble() + bonus) {
                     val (type, id) = itemId.split(":")
                     return when (type.lowercase()) {
                         "wm" -> {
