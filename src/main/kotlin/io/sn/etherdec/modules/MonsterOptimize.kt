@@ -4,6 +4,7 @@ import io.sn.etherdec.EtherCore
 import io.sn.etherdec.objects.AListener
 import io.sn.etherdec.objects.AbstractModule
 import me.deecaad.weaponmechanics.WeaponMechanics
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
@@ -19,12 +20,19 @@ class MonsterOptimize(plug: EtherCore) : AbstractModule(plug), AListener {
 
     @EventHandler
     fun onShoot(evt: ProjectileLaunchEvent) {
+        if (evt.location.world.name != "chernobyl") return
         if (evt.entity.shooter is Skeleton) {
             if (evt.entity is Arrow) {
                 val arr = evt.entity as Arrow
                 if (Random.nextDouble() < 0.4) arr.addCustomEffect(PotionEffect(PotionEffectType.POISON, Random.nextInt(80, 120), 1), true)
             }
         }
+    }
+
+    private fun checkForSpace(loc: Location): Boolean = (0..plug.config.getInt("mob-spawning.required-space")).map {
+        Location(loc.world, loc.x, loc.y + it, loc.z)
+    }.all {
+        it.block.type.name.contains(Regex(".*(AIR|LEAVE|COBWEB|WATER|LAVA).*"))
     }
 
     @EventHandler
@@ -34,7 +42,9 @@ class MonsterOptimize(plug: EtherCore) : AbstractModule(plug), AListener {
 
             if (evt.location.world.name !in plug.config.getStringList("mob-spawning.applied-worlds")) return // disable mob spawn except enabled worlds`
 
-            if (evt.location.world.isDayTime) return // spawning monsters in daytime is not allowed
+            // if (evt.location.world.isDayTime) return // spawning monsters in daytime is not allowed
+
+            if (!checkForSpace(evt.location)) return // not enough space
 
             if (Random.nextDouble() > plug.config.getDouble("mob-spawning.monster-spawn-rate", 0.5)) return
 
@@ -90,10 +100,11 @@ class MonsterOptimize(plug: EtherCore) : AbstractModule(plug), AListener {
                 }
 
                 if (ety is Phantom) {
-                    ety.target = ety.location.getNearbyPlayers(plug.config.getDouble("mob-spawning.phantom-view-radius", 50.0)).let { nearBy ->
-                        if (nearBy.isEmpty()) return@spawnEntity
-                        nearBy.elementAt(0)
-                    }
+                    ety.target =
+                        ety.location.getNearbyPlayers(plug.config.getDouble("mob-spawning.phantom-view-radius", 50.0)).let { nearBy ->
+                            if (nearBy.isEmpty()) return@spawnEntity
+                            nearBy.elementAt(0)
+                        }
                 }
             }
         }

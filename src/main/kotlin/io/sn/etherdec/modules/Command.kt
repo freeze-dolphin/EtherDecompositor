@@ -91,18 +91,19 @@ class Command(plug: EtherCore) : AbstractModule(plug) {
                     if (amount == "all") Balance.convertAll(player, player) else Balance.convert(player, player)
                 })
         ).withSubcommand(
-            CommandAPICommand("convert").withPermission(CommandPermission.OP).withArguments(PlayerArgument("player"))
-                .executes(CommandExecutor { _, args ->
+            CommandAPICommand("convert").withPermission(CommandPermission.OP)
+                .withArguments(PlayerArgument("player"), IntegerArgument("amount")).executes(CommandExecutor { _, args ->
                     val player = args[0] as Player
+                    val amount = args[1] as Int
 
                     try {
                         Rcon.open(plug.config.getString("rcon.host"), plug.config.getInt("rcon.port")).use { rcon ->
                             if (rcon.authenticate(plug.config.getString("rcon.passwd"))) {
-                                val actual = 1152 / plug.config.getDouble("exchange-rate", 10.0)
+                                val actual = amount / plug.config.getDouble("exchange-rate", 10.0)
                                 val echo = rcon.sendCommand("offlinepay ${player.name} $actual")
                                 if (echo.isNotEmpty()) plug.logger.info(echo)
-                                Balance.remove(player, 1152.0)
-                                plug.logger.info("Transaction completed: ${player.name} yetzirah 1152 -> assiash $actual")
+                                Balance.remove(player, amount.toDouble())
+                                plug.logger.info("Transaction completed: ${player.name} yetzirah $amount -> assiash $actual")
                             } else {
                                 plug.logger.severe("Failed to authenticate")
                             }

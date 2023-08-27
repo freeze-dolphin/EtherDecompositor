@@ -30,6 +30,7 @@ class Death(plug: EtherCore) : AbstractModule(plug), AListener {
         }
 
         evt.keepLevel = true
+        evt.player.giveExpLevels(-1)
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
