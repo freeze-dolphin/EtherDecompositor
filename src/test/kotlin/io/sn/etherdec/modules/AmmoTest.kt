@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 class AmmoTest {
 
     private fun printJson(id: String, data: Int) {
-        println(",\n\"$id\":\n{\n\"id\": \"${id.lowercase()}\",\n\"item\": \"prismarine_shard\",\n\"template\": \"ITEM\",\n\"data\": $data\n}")
+        println(",\n\"ETHERITE_AMMO_$id\":\n{\n\"id\": \"${id.lowercase()}\",\n\"item\": \"prismarine_shard\",\n\"template\": \"ITEM\",\n\"data\": $data\n}")
     }
 
     @Test
