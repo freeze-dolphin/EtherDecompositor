@@ -18,7 +18,7 @@ class Ammo(plug: EtherCore) : AbstractModule(plug) {
         SlimefunItem(
             plug.group, SlimefunItemStack(
                 "ETHERITE_AMMO_${id.uppercase()}", Material.PRISMARINE_SHARD,
-                "&f弹药 &7- &e$name&r"
+                "&f弹药 &7- &e$name"
             ), type, nullRecipe
         ).register(plug)
     }
