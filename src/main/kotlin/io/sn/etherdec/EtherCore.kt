@@ -74,6 +74,7 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
         // Chernobyl(this).setup()
         SoulboundItemsList(this).setup()
         ProtocolModifier(this).setup()
+        Ammo(this).setup()
     }
 
     private fun setupConfig() {
