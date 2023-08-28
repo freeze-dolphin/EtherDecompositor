@@ -5,6 +5,8 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
 import io.sn.etherdec.EtherCore
 import io.sn.etherdec.objects.AbstractModule
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
+import org.bukkit.inventory.ItemStack
 
 class Ammo(plug: EtherCore) : AbstractModule(plug) {
 
@@ -17,8 +19,16 @@ class Ammo(plug: EtherCore) : AbstractModule(plug) {
     private fun registerAmmo(name: String, id: String) {
         SlimefunItem(
             plug.group, SlimefunItemStack(
-                "ETHERITE_AMMO_${id.uppercase()}", Material.PRISMARINE_SHARD,
-                "&f弹药 &7- &e$name"
+                "ETHERITE_AMMO_${id.uppercase()}", ItemStack(Material.PRISMARINE_SHARD).apply {
+                    editMeta {
+                        it.persistentDataContainer[NamespacedKey.fromString("weaponmechanics:ammo-name")!!, org.bukkit.persistence.PersistentDataType.STRING] =
+                            id
+                        if (name.contains('夹')) {
+                            it.persistentDataContainer[NamespacedKey.fromString("weaponmechanics:ammo-magazine")!!, org.bukkit.persistence.PersistentDataType.INTEGER] =
+                                1
+                        }
+                    }
+                }, "&f弹药 &7- &e$name"
             ), type, nullRecipe
         ).register(plug)
     }

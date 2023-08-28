@@ -14,6 +14,7 @@ import org.bukkit.event.entity.PlayerDeathEvent
 import kotlin.math.min
 import kotlin.random.Random
 
+
 class Death(plug: EtherCore) : AbstractModule(plug), AListener {
 
     @EventHandler
@@ -30,7 +31,7 @@ class Death(plug: EtherCore) : AbstractModule(plug), AListener {
         }
 
         evt.keepLevel = true
-        evt.player.giveExpLevels(-1)
+        evt.player.giveExpLevels(-1 * plug.config.getInt("death.exp-drop-level", 1))
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

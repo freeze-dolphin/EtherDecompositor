@@ -5,6 +5,8 @@ import com.comphenix.protocol.ProtocolManager
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack
 import io.sn.etherdec.modules.*
+import io.sn.etherdec.objects.AbstractModule
+import io.sn.etherdec.objects.Unregisterable
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.serializer.json.JSONComponentSerializer
@@ -55,26 +57,43 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
 
         ptMan = ProtocolLibrary.getProtocolManager()
 
+        modules = arrayOf(
+            Command(this),
+            MonsterOptimize(this),
+            Bleeding(this),
+            ChestAutoStuff(this),
+            KillAndDrop(this),
+            BasicProtection(this),
+            Pager(this),
+            Death(this),
+            ATM(this),
+            BasicAntiCheat(this),
+            // TrackerCompass(this),
+            // Chernobyl(this),
+            SoulboundItemsList(this),
+            ProtocolModifier(this),
+            Ammo(this),
+            MiscItems(this)
+        )
+
         setupConfig()
         setupModules()
     }
 
+    private lateinit var modules: Array<AbstractModule>
+
     private fun setupModules() {
-        Command(this).setup()
-        MonsterOptimize(this).setup()
-        Bleeding(this).setup()
-        ChestAutoStuff(this).setup()
-        KillAndDrop(this).setup()
-        BasicProtection(this).setup()
-        Pager(this).setup()
-        Death(this).setup()
-        ATM(this).setup()
-        BasicAntiCheat(this).setup()
-        // TrackerCompass(this).setup()
-        // Chernobyl(this).setup()
-        SoulboundItemsList(this).setup()
-        ProtocolModifier(this).setup()
-        Ammo(this).setup()
+        modules.forEach {
+            it.setup()
+        }
+    }
+
+    override fun onDisable() {
+        modules.forEach {
+            if (it is Unregisterable) {
+                it.onDisable()
+            }
+        }
     }
 
     private fun setupConfig() {
