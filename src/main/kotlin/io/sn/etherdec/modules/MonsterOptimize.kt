@@ -63,6 +63,7 @@ class MonsterOptimize(plug: EtherCore) : AbstractModule(plug), AListener {
                 }
             } else if (rnd < plug.config.getDouble("mob-spawning.phantom-spawn-rate", 0.08)) {
                 etype = EntityType.PHANTOM
+                if (evt.location.world.isDayTime) return
             } else {
                 if (Random.nextDouble() < plug.config.getDouble("mob-spawning.zombie-spawn-decreaser-rate", 0.5)) return
 

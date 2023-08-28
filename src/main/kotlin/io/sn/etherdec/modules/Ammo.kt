@@ -180,8 +180,8 @@ object AmmoList {
     val ammoNames = arrayOf(
         "12G 燃烧弹",
         "SideWinder7 弹夹",
-        "手枪子弹 &8(&f9.06mm&8)", // .357 Magnum
-        "突击步枪弹夹 &8(&f5.56mm&8)", // FR_5.56, M4A1, AUG
+        "手枪子弹 &8(&f9.06mm&8)", // .357 Magnum [HESNIPERAMMO]
+        "突击步枪弹夹 &8(&f5.56mm&8)", // FR_5.56, M4A1, AUG [FAMASAMMO]
         "PR3OSC",
         "PR3",
         "SPAS",
@@ -208,14 +208,14 @@ object AmmoList {
         "EMP4",
         "AMA40MMSPOTLIGHT",
         "STINGER",
-        "Uzi 冲锋枪弹夹", // Uzi
+        "Uzi 冲锋枪弹夹", // Uzi [MINIUZIAMMO]
         "M72LAW",
-        "狙击枪子弹 &8(&f12.7mm&8)", // AX_50
+        "狙击枪子弹 &8(&f12.7mm&8)", // AX_50 [HIGHEXPISTOLAMMO]
         "GAU19",
         "BARRETTCOMPACT",
         "R700",
         "Z10LIGHTRIFLE",
-        "突击步枪弹夹 &8(&f7.62mm&8)", // AK_47, FN_FAL
+        "突击步枪弹夹 &8(&f7.62mm&8)", // AK_47, FN_FAL [AK47AMMO]
         "TRIPLETAKE",
         "SEEKERRIFLE",
         "FNSCARAMMO",
@@ -225,7 +225,7 @@ object AmmoList {
         "WITHERINGAK",
         "12GBIRDSHOT",
         "L86",
-        "突击步枪弹夹 &8(&f7.92mm&8)", // STG44
+        "突击步枪弹夹 &8(&f7.92mm&8)", // STG44 [G3AMMO]
         "ACR",
         "AUG",
         "FLAMETHROWER",
@@ -246,24 +246,24 @@ object AmmoList {
         "GAU30MM",
         "FLAREGUN",
         "STARSNCI3",
-        "手枪弹夹 &8(&f12.7mm&8)", // 50_GS (DesertEagle)
+        "手枪弹夹 &8(&f12.7mm&8)", // 50_GS (DesertEagle) [DESERTEAGLEAMMO]
         "MLRS6",
         "M60E4",
         "DRAGUNOV",
         "SHULKERSNIPER",
         "MW ammoBAG",
         "AMA40MM",
-        "小型核弹弹头", // Fatman
+        "小型核弹弹头", // Fatman [AT4AMMO]
         "GAU30MMHE",
         "DEVOTIONX55",
         "KCASLUGGER",
         "12GHIGHEXPLOSIVE",
-        "霰弹枪子弹 &8(&f12 Gauge&8)", // Origin_12, R9_0
+        "霰弹枪子弹 &8(&f12 Gauge&8)", // Origin_12, R9_0 [W1200AMMO]
         "M4A1 弹夹",
         "M249",
         "格洛克弹夹",
         "HONEYBADGER",
-        "RPG-7 火箭", // RPG_7
+        "RPG-7 火箭", // RPG_7 [RPGAMMO]
         "12GFLECHETTE",
         "L96",
         "PREDATOR37MMSR",
@@ -283,7 +283,7 @@ object AmmoList {
         "W1200INCENDIARY",
         "USPPOISON",
         "ROCKETPOD68MM",
-        "毛瑟步枪子弹 &8(&f7.92mm&8)", // for Kar98k, can be used to craft 毛瑟步枪弹药盒 &8(&f7.92mm&8)
+        "毛瑟步枪子弹 &8(&f7.92mm&8)", // [SNIPERAMMO] for Kar98k, can be used to craft 毛瑟步枪弹药盒 &8(&f7.92mm&8)
         "PANZERFAUST3",
         "MINIGUN ammoPORTABLE",
         "BASICSALVO",
@@ -306,7 +306,7 @@ object AmmoList {
         "JURY",
         "STARSBURNINGRUBBER",
         "GAU20MMHVLE",
-        "毛瑟步枪弹药盒 &8(&f7.92mm&8)", // MG34
+        "毛瑟步枪弹药盒 &8(&f7.92mm&8)", // MG34 [GAU24MMAMMO]
         "KCASLUGGERKINETIC",
         "USP",
         "COLT45",

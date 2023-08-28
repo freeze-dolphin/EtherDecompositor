@@ -6,11 +6,15 @@ import io.sn.etherdec.objects.AListener
 import io.sn.etherdec.objects.AbstractModule
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.inventory.ItemStack
 import kotlin.math.min
 import kotlin.random.Random
 
@@ -54,6 +58,40 @@ class Death(plug: EtherCore) : AbstractModule(plug), AListener {
                     val damager = evt.damager as Player
                     damager.sendMessage(EtherCore.minid("<dark_gray>[<green>经济<dark_gray>] <white>你因为击杀 <yellow>${player.name} <white>获得了 <green>${droped} <dark_green>E"))
                     Balance.add(damager, droped)
+                }
+            }
+        } else if (evt.entity is Mob) {
+            val mob = evt.entity as Mob
+            if (evt.finalDamage >= mob.health) {
+                if (Random.nextDouble() < plug.config.getDouble("mob-drops.mob-drop-gunpowder-rate", 0.5)) {
+                    mob.location.toCenterLocation().let {
+                        it.world.dropItemNaturally(it, ItemStack(Material.GUNPOWDER,
+                            plug.config.getString("mob-drops.mob-drop-gunpowder-amount-range", "0,4")!!.split(",").map { st -> st.toInt() }
+                                .let { ls ->
+                                    Random.nextInt(ls[0], ls[1])
+                                })
+                        )
+                    }
+                }
+
+                if (mob.type == EntityType.PHANTOM) {
+                    mob.location.toCenterLocation().let {
+                        it.world.dropItemNaturally(it, ItemStack(Material.IRON_INGOT,
+                            plug.config.getString("mob-drops.phantom-drop-iron-ingot-amount-range", "4,8")!!.split(",")
+                                .map { st -> st.toInt() }.let { ls ->
+                                    Random.nextInt(ls[0], ls[1])
+                                })
+                        )
+                    }
+                } else if (mob.type == EntityType.ZOMBIE) {
+                    mob.location.toCenterLocation().let {
+                        it.world.dropItemNaturally(it, ItemStack(Material.IRON_INGOT,
+                            plug.config.getString("mob-drops.zombie-drop-iron-ingot-amount-range", "0,2")!!.split(",")
+                                .map { st -> st.toInt() }.let { ls ->
+                                    Random.nextInt(ls[0], ls[1])
+                                })
+                        )
+                    }
                 }
             }
         }
