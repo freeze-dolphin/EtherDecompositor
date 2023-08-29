@@ -23,7 +23,7 @@ class Ammo(plug: EtherCore) : AbstractModule(plug) {
                     editMeta {
                         it.persistentDataContainer[NamespacedKey.fromString("weaponmechanics:ammo-name")!!, org.bukkit.persistence.PersistentDataType.STRING] =
                             id
-                        if (name.contains('夹')) {
+                        if (name.contains('夹') || name.contains('盒')) {
                             it.persistentDataContainer[NamespacedKey.fromString("weaponmechanics:ammo-magazine")!!, org.bukkit.persistence.PersistentDataType.INTEGER] =
                                 1
                         }

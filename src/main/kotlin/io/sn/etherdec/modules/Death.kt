@@ -4,6 +4,7 @@ import com.spawnchunk.emeraldbank.modules.Balance
 import io.sn.etherdec.EtherCore
 import io.sn.etherdec.objects.AListener
 import io.sn.etherdec.objects.AbstractModule
+import me.deecaad.weaponmechanics.WeaponMechanics
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -72,6 +73,15 @@ class Death(plug: EtherCore) : AbstractModule(plug), AListener {
                                 })
                         )
                     }
+                }
+
+                if (mob.equipment.helmet.isSimilar(WeaponMechanics.getWeaponHandler().infoHandler.generateWeapon("Grenade", 1))) {
+                    mob.world.createExplosion(
+                        mob.location,
+                        plug.config.getDouble("mob-spawning.bomber-zombie-explosion-power", 3.0).toFloat(),
+                        false,
+                        false
+                    )
                 }
 
                 if (mob.type == EntityType.PHANTOM) {

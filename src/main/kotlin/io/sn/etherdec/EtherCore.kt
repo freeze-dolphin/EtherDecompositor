@@ -73,7 +73,8 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
             SoulboundItemsList(this),
             ProtocolModifier(this),
             Ammo(this),
-            MiscItems(this)
+            MiscItems(this),
+            Combat(this)
         )
 
         setupConfig()

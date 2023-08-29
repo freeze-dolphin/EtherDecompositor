@@ -97,6 +97,8 @@ class MonsterOptimize(plug: EtherCore) : AbstractModule(plug), AListener {
                         if (Random.nextDouble() < plug.config.getDouble("mob-spawning.assassin-zombie-speed-rate", 0.5)) {
                             ety.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 3600, Random.nextInt(1, 2)))
                         }
+                    } else if (Random.nextDouble() < plug.config.getDouble("mob-spawning.bomber-zombie-spawn-rate", 0.02)) {
+                        ety.equipment.helmet = WeaponMechanics.getWeaponHandler().infoHandler.generateWeapon("Grenade", 1)
                     }
                 }
 
