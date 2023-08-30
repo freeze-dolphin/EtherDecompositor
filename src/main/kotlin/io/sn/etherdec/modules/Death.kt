@@ -36,7 +36,8 @@ class Death(plug: EtherCore) : AbstractModule(plug), AListener {
         }
 
         evt.keepLevel = true
-        evt.player.giveExpLevels(-1 * plug.config.getInt("death.exp-drop-level", 1))
+
+        if (evt.player.location.world.name != "world") evt.player.giveExpLevels(-1 * plug.config.getInt("death.exp-drop-level", 1))
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -77,10 +78,7 @@ class Death(plug: EtherCore) : AbstractModule(plug), AListener {
 
                 if (mob.equipment.helmet.isSimilar(WeaponMechanics.getWeaponHandler().infoHandler.generateWeapon("Grenade", 1))) {
                     mob.world.createExplosion(
-                        mob.location,
-                        plug.config.getDouble("mob-spawning.bomber-zombie-explosion-power", 3.0).toFloat(),
-                        false,
-                        false
+                        mob.location, plug.config.getDouble("mob-spawning.bomber-zombie-explosion-power", 3.0).toFloat(), false, false
                     )
                 }
 

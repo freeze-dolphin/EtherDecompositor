@@ -74,7 +74,8 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
             ProtocolModifier(this),
             Ammo(this),
             MiscItems(this),
-            Combat(this)
+            Combat(this),
+            Scoreboard(this),
         )
 
         setupConfig()
