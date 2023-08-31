@@ -17,6 +17,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
+import kotlin.io.path.Path
 
 class EtherCore : JavaPlugin(), EtherSlimefunAddon {
 
@@ -39,8 +40,7 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
 
     val group = ItemGroup(
         NamespacedKey(this, "etherite_dec"), CustomItemStack(
-            Material.CHEST,
-            "&dEtherite Decompositor&f"
+            Material.CHEST, "&dEtherite Decompositor&f"
         ), 4
     )
 
@@ -76,6 +76,7 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
             MiscItems(this),
             Combat(this),
             Scoreboard(this),
+            BackpackVault(this),
         )
 
         setupConfig()
@@ -102,6 +103,12 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
         saveDefaultConfig()
         if (!dpFile.exists()) dpFile.createNewFile()
         dumpedItems = YamlConfiguration.loadConfiguration(dpFile)
+
+        Path(dataFolder.path, "storage").toFile().let {
+            if (!it.exists()) {
+                it.mkdirs()
+            }
+        }
     }
 
     override fun getJavaPlugin(): JavaPlugin = this

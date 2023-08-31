@@ -18,7 +18,6 @@ import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import java.io.IOException
 
-
 class Command(plug: EtherCore) : AbstractModule(plug) {
 
     override fun postSetup() {
@@ -34,6 +33,17 @@ class Command(plug: EtherCore) : AbstractModule(plug) {
                 }
             }).register()
 
+        CommandAPICommand("boxo").withPermission(CommandPermission.OP).withArguments(PlayerArgument("player"))
+            .executesPlayer(PlayerCommandExecutor { _, args ->
+                val player = args[0] as Player
+
+                BackpackVault.openGuiFor(plug, player)
+            }).register()
+
+        CommandAPICommand("box").executesPlayer(PlayerCommandExecutor { sender, _ ->
+                BackpackVault.openGuiFor(plug, sender)
+            }).register()
+
         CommandAPICommand("invsee").withAliases("inv").withPermission(CommandPermission.OP).withArguments(PlayerArgument("player"))
             .executesPlayer(PlayerCommandExecutor { sender, args ->
                 val player = args[0] as Player
@@ -41,7 +51,7 @@ class Command(plug: EtherCore) : AbstractModule(plug) {
                 sender.openInventory(player.inventory)
             }).register()
 
-        CommandAPICommand("enderchest").withAliases("ec").withPermission(CommandPermission.OP).withArguments(PlayerArgument("player"))
+        CommandAPICommand("enderchestvanilla").withAliases("ecv").withPermission(CommandPermission.OP).withArguments(PlayerArgument("player"))
             .executesPlayer(PlayerCommandExecutor { sender, args ->
                 val player = args[0] as Player
 

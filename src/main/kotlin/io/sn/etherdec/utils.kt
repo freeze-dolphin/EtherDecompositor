@@ -3,6 +3,7 @@ package io.sn.etherdec
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.configuration.ConfigurationSection
+import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 import java.util.concurrent.TimeUnit
 
@@ -27,4 +28,12 @@ tailrec fun findLastNewIndex(current: Int, yml: ConfigurationSection): Int = if 
     findLastNewIndex(current + 1, yml)
 } else {
     current
+}
+
+fun getPermVariable(plr: Player, startWith: String, default: Int): Int {
+    return plr.effectivePermissions.filter {
+        it.permission.startsWith(startWith)
+    }.maxOfOrNull {
+        it.permission.split(".").last().toInt()
+    } ?: default
 }
