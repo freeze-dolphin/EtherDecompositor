@@ -2,7 +2,6 @@
 
 package io.sn.etherdec
 
-
 import me.clip.placeholderapi.PlaceholderAPI
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -10,10 +9,7 @@ import org.bukkit.Location
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
-import java.util.*
 import java.util.concurrent.TimeUnit
-import de.cubbossa.commonsettings.NamespacedKey as SettingKey
-
 
 fun vecAscend(plug: EtherCore, point1: Location, point2: Location, space: Double, delay: Long = 0L, func: (Vector) -> Unit) {
     val distance: Double = point1.distance(point2)
@@ -45,8 +41,6 @@ fun getPermVariable(plr: Player, startWith: String, default: Int): Int {
         it.permission.split(".").last().toInt()
     } ?: default
 }
-
-fun <T> getSettingForPlayer(key: SettingKey, uid: UUID): T = EtherCore.settings.getSetting<T>(key).getValue(uid)
 
 fun ph(originalText: String, plr: Player): String = PlaceholderAPI.setPlaceholders(plr, originalText)
 

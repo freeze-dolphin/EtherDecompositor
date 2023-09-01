@@ -2,11 +2,18 @@ package io.sn.etherdec.modules
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
+import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler
 import io.sn.etherdec.EtherCore
 import io.sn.etherdec.objects.AbstractModule
+import me.deecaad.weaponmechanics.WeaponMechanics
+import me.deecaad.weaponmechanics.wrappers.EntityWrapper
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.Particle
+import org.bukkit.Sound
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.Damageable
 
 class Ammo(plug: EtherCore) : AbstractModule(plug) {
 
@@ -14,6 +21,51 @@ class Ammo(plug: EtherCore) : AbstractModule(plug) {
         AmmoList.ammoNames.zip(AmmoList.ammoIds).forEach {
             registerAmmo(it.first, it.second)
         }
+
+        SlimefunItem(
+            plug.group,
+            SlimefunItemStack(
+                "ETHERITE_GENERIC_AMMO_BOX",
+                Material.GOLDEN_HOE,
+                "&e通用武器弹药箱&r",
+                "",
+                "&e放在副手右键 &f为主手的武器填充一次弹药"
+            ),
+            type,
+            nullRecipe
+        ).apply {
+            addItemHandler(ItemUseHandler {
+                if (it.hand == EquipmentSlot.OFF_HAND) {
+                    val mainHand = it.player.equipment.itemInMainHand
+                    val wpTitle = WeaponMechanics.getWeaponHandler().infoHandler.getWeaponTitle(mainHand, true) ?: return@ItemUseHandler
+
+                    if (WeaponMechanics.getWeaponHandler().reloadHandler.getAmmoLeft(mainHand, wpTitle) > 0) return@ItemUseHandler
+
+                    WeaponMechanics.getWeaponHandler().reloadHandler.startReloadWithoutTrigger(
+                        EntityWrapper(it.player),
+                        wpTitle,
+                        mainHand,
+                        EquipmentSlot.HAND,
+                        false,
+                        false
+                    )
+                    it.item.editMeta { im ->
+                        val dmgb = im as Damageable
+                        if (!dmgb.isUnbreakable) {
+                            val cost = plug.config.getInt("ammo.generic-box-cost-per-use", 8)
+
+                            dmgb.damage += cost
+                            if (dmgb.damage >= it.item.type.maxDurability) {
+                                it.item.amount -= 1
+                                it.player.world.playSound(it.player, Sound.ENTITY_ITEM_BREAK, 1f, 1f)
+                                it.player.world.spawnParticle(Particle.ITEM_CRACK, it.player.location, 1, it.item)
+                            }
+                        }
+                    }
+                }
+            })
+        }
+
     }
 
     private fun registerAmmo(name: String, id: String) {

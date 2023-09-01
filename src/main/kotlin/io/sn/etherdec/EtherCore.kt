@@ -2,7 +2,6 @@ package io.sn.etherdec
 
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
-import de.cubbossa.commonsettings.SettingsAPI
 import fr.minuskube.netherboard.Netherboard
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack
@@ -37,7 +36,6 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
         private val legacy: LegacyComponentSerializer = LegacyComponentSerializer.legacy('&')
 
         lateinit var ptMan: ProtocolManager
-        lateinit var settings: SettingsAPI
         lateinit var board: Netherboard
 
         fun minid(s: String): Component = mini.deserialize(s)
@@ -64,7 +62,6 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
         logger.info("`Ether Decompisitor` is ready in sit. ;)")
 
         ptMan = ProtocolLibrary.getProtocolManager()
-        settings = SettingsAPI.getInstance()
         board = Netherboard.instance()
 
         modules = arrayOf(

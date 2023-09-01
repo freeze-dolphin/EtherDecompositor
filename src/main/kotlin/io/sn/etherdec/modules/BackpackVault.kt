@@ -6,7 +6,6 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils
 import io.sn.etherdec.EtherCore
-import io.sn.etherdec.findLastNewIndex
 import io.sn.etherdec.getPermVariable
 import io.sn.etherdec.objects.AbstractModule
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu
@@ -15,6 +14,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import kotlin.io.path.Path
+import kotlin.math.min
 
 class BackpackVault(plug: EtherCore) : AbstractModule(plug) {
 
@@ -27,13 +27,12 @@ class BackpackVault(plug: EtherCore) : AbstractModule(plug) {
 
                 val yml = YamlConfiguration.loadConfiguration(this)
 
-                if (!yml.contains("0")) {
-                    return arrayOf()
-                }
+                val maxSlotNum = plug.config.getInt("backpack-vault.max-slot-num", 18)
+                val lidx = maxSlotNum - 1
 
-                val lidx = findLastNewIndex(0, yml) - 1
-
-                return (0..lidx).map {
+                return (0..lidx).filter {
+                    yml.contains(it.toString()) && yml.isItemStack(it.toString())
+                }.map {
                     yml.getItemStack(it.toString())
                 }.toTypedArray()
             }
@@ -63,8 +62,11 @@ class BackpackVault(plug: EtherCore) : AbstractModule(plug) {
         fun openGuiFor(plug: EtherCore, plr: Player) {
             val inv = ChestMenu("&8安全箱", ChestMenuUtils.getBlankTexture())
 
-            val cur = getPermVariable(plr, "etherite.vault.size.", 0)
-            (cur + 1..8).forEach {
+            val defaultSlotNum = plug.config.getInt("backpack-vault.default-slot-num", 6)
+            val maxSlotNum = plug.config.getInt("backpack-vault.max-slot-num", 18)
+
+            val cur = min(getPermVariable(plr, "etherite.vault.size.", 0) + defaultSlotNum, maxSlotNum - 1)
+            (cur + 1 until maxSlotNum).forEach {
                 inv.addItem(it, barr, ChestMenuUtils.getEmptyClickHandler())
             }
 
