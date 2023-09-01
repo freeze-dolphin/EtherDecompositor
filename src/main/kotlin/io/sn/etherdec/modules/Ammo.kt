@@ -64,8 +64,7 @@ class Ammo(plug: EtherCore) : AbstractModule(plug) {
                     }
                 }
             })
-        }
-
+        }.register(plug)
     }
 
     private fun registerAmmo(name: String, id: String) {
