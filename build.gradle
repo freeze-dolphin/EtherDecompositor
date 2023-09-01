@@ -42,7 +42,6 @@ dependencies {
     compileOnly 'com.comphenix.protocol:ProtocolLib:5.1.0'
     compileOnly 'fr.minuskube:netherboard-core:1.2.3'
     compileOnly 'fr.minuskube:netherboard-bukkit:1.2.3'
-    compileOnly 'com.github.CubBossa:CommonSettings:aa334afcd6'
 
     compileOnly files("libs/EmeraldBank-1.20-2.1.jar")
 

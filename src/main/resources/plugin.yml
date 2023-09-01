@@ -14,7 +14,6 @@ depend:
   - PlaceholderAPI
   - EmeraldBank
   - Netherboard
-  - CommonSettings
 
 api-version: 1.20
 
