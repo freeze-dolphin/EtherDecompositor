@@ -2,6 +2,8 @@ package io.sn.etherdec
 
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
+import de.cubbossa.commonsettings.SettingsAPI
+import fr.minuskube.netherboard.Netherboard
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack
 import io.sn.etherdec.modules.*
@@ -10,6 +12,7 @@ import io.sn.etherdec.objects.Unregisterable
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.serializer.json.JSONComponentSerializer
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -19,6 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import kotlin.io.path.Path
 
+@Suppress("unused")
 class EtherCore : JavaPlugin(), EtherSlimefunAddon {
 
     lateinit var dumpedItems: YamlConfiguration
@@ -29,13 +33,17 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
         private const val DEFAULT_PREFIX = "<dark_gray>[<color:#FFDAB9>系统<dark_gray>] "
         private val mini: MiniMessage = MiniMessage.miniMessage()
         private val plain: PlainTextComponentSerializer = PlainTextComponentSerializer.plainText()
-        private val jsons: JSONComponentSerializer = JSONComponentSerializer.json()
+        private val json: JSONComponentSerializer = JSONComponentSerializer.json()
+        private val legacy: LegacyComponentSerializer = LegacyComponentSerializer.legacy('&')
 
         lateinit var ptMan: ProtocolManager
+        lateinit var settings: SettingsAPI
+        lateinit var board: Netherboard
 
         fun minid(s: String): Component = mini.deserialize(s)
         fun plains(s: Component): String = plain.serialize(s)
-        fun jsond(jsonStr: String): Component = jsons.deserialize(jsonStr)
+        fun jsond(jsonStr: String): Component = json.deserialize(jsonStr)
+        fun legacyd(s: String): Component = legacy.deserialize(s)
     }
 
     val group = ItemGroup(
@@ -56,6 +64,8 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
         logger.info("`Ether Decompisitor` is ready in sit. ;)")
 
         ptMan = ProtocolLibrary.getProtocolManager()
+        settings = SettingsAPI.getInstance()
+        board = Netherboard.instance()
 
         modules = arrayOf(
             Command(this),
@@ -75,15 +85,20 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
             Ammo(this),
             MiscItems(this),
             Combat(this),
-            Scoreboard(this),
+            // Scoreboard(this),
             BackpackVault(this),
         )
 
         setupConfig()
+        setupSettings()
         setupModules()
     }
 
-    private lateinit var modules: Array<AbstractModule>
+    lateinit var modules: Array<AbstractModule>
+
+    private fun setupSettings() {
+        // CommonSettings.setup()
+    }
 
     private fun setupModules() {
         modules.forEach {
@@ -107,6 +122,12 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
         Path(dataFolder.path, "storage").toFile().let {
             if (!it.exists()) {
                 it.mkdirs()
+            }
+        }
+
+        Path(dataFolder.path, "statistics.yml").toFile().let {
+            if (!it.exists()) {
+                it.createNewFile()
             }
         }
     }

@@ -11,6 +11,7 @@ import dev.jorel.commandapi.executors.CommandExecutor
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import io.sn.etherdec.EtherCore
 import io.sn.etherdec.objects.AbstractModule
+import io.sn.etherdec.objects.Reloadable
 import nl.vv32.rcon.Rcon
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -133,6 +134,11 @@ class Command(plug: EtherCore) : AbstractModule(plug) {
         ).withSubcommand(
             CommandAPICommand("reload").withPermission(CommandPermission.OP).executes(CommandExecutor { _, _ ->
                 plug.reloadConfig()
+                plug.modules.forEach {
+                    if (it is Reloadable) {
+                        it.onReload()
+                    }
+                }
             })
         ).register()
     }
