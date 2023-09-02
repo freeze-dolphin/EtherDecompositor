@@ -20,16 +20,16 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset
-import org.bukkit.Material
-import org.bukkit.Sound
-import org.bukkit.World
+import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.block.Chest
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 import kotlin.io.path.Path
+import kotlin.math.max
 import kotlin.random.Random
 
 class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
@@ -115,9 +115,36 @@ class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
                 }
 
                 override fun isSynchronized(): Boolean {
-                    return false
+                    return true
                 }
             })
+        }
+
+        private val key = NamespacedKey(plug, "ckChestAutoStuffLock")
+
+        private fun updateChunkLock(ck: Chunk) {
+            ck.isForceLoaded = ck.persistentDataContainer[key, PersistentDataType.INTEGER]!! > 0
+        }
+
+        private fun lockChunk(ck: Chunk) {
+            if (ck.persistentDataContainer.has(key)) {
+                ck.persistentDataContainer[key, PersistentDataType.INTEGER] =
+                    ck.persistentDataContainer[key, PersistentDataType.INTEGER]!! + 1
+            } else {
+                ck.persistentDataContainer[key, PersistentDataType.INTEGER] = 1
+            }
+            updateChunkLock(ck)
+        }
+
+        private fun unlockChunk(ck: Chunk) {
+            if (ck.persistentDataContainer.has(key)) {
+                ck.persistentDataContainer[key, PersistentDataType.INTEGER] =
+                    max(0, ck.persistentDataContainer[key, PersistentDataType.INTEGER]!! - 1)
+            } else {
+                ck.persistentDataContainer[key, PersistentDataType.INTEGER] = 0
+                plug.logger.warning("Chunk: [${ck.world.name}, ${ck.x}, ${ck.z}] has no NamespacedKey ${key.key} on unlocking!")
+            }
+            updateChunkLock(ck)
         }
 
         fun tick(b: Block) {
@@ -136,9 +163,14 @@ class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
             inv.setPlayerInventoryClickable(true)
 
             if (inv.toInventory().isEmpty) {
+                if (internalTick == 0L) {
+                    lockChunk(b.chunk)
+                }
+
                 if (internalTick > plug.config.getLong("filling.fill-delay")) {
                     internalTick = 0
                     fillChest(inv)
+                    unlockChunk(b.chunk)
                     return
                 }
                 internalTick += 1

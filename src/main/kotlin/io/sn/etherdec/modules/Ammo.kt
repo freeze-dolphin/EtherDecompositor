@@ -6,12 +6,13 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler
 import io.sn.etherdec.EtherCore
 import io.sn.etherdec.objects.AbstractModule
 import me.deecaad.weaponmechanics.WeaponMechanics
-import me.deecaad.weaponmechanics.wrappers.EntityWrapper
+import me.deecaad.weaponmechanics.wrappers.PlayerWrapper
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
 
@@ -27,10 +28,16 @@ class Ammo(plug: EtherCore) : AbstractModule(plug) {
             SlimefunItemStack(
                 "ETHERITE_GENERIC_AMMO_BOX",
                 Material.GOLDEN_HOE,
-                "&e通用武器弹药箱&r",
+                "&b通用武器弹药箱&r",
                 "",
                 "&e放在副手右键 &f为主手的武器填充一次弹药"
-            ),
+            ).apply {
+                editMeta {
+                    ItemFlag.values().forEach { flg ->
+                        it.addItemFlags(flg)
+                    }
+                }
+            },
             type,
             nullRecipe
         ).apply {
@@ -41,14 +48,16 @@ class Ammo(plug: EtherCore) : AbstractModule(plug) {
 
                     if (WeaponMechanics.getWeaponHandler().reloadHandler.getAmmoLeft(mainHand, wpTitle) > 0) return@ItemUseHandler
 
-                    WeaponMechanics.getWeaponHandler().reloadHandler.startReloadWithoutTrigger(
-                        EntityWrapper(it.player),
+                    if (!WeaponMechanics.getWeaponHandler().reloadHandler.startReloadWithoutTrigger(
+                        PlayerWrapper(it.player),
                         wpTitle,
                         mainHand,
                         EquipmentSlot.HAND,
-                        false,
+                        true,
                         false
-                    )
+                    )) return@ItemUseHandler
+
+                    it.player.world.playSound(it.player, Sound.ENTITY_HORSE_SADDLE, 1f, 0.6f)
                     it.item.editMeta { im ->
                         val dmgb = im as Damageable
                         if (!dmgb.isUnbreakable) {
