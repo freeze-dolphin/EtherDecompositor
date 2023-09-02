@@ -46,7 +46,9 @@ class MonsterOptimize(plug: EtherCore) : AbstractModule(plug), AListener {
 
             if (!checkForSpace(evt.location)) return // not enough space
 
-            if (Random.nextDouble() > plug.config.getDouble("mob-spawning.monster-spawn-rate", 0.5)) return
+            val spawnRate = if (evt.location.world.name == "chernobyl") plug.config.getDouble("chernobyl.override-monster-spawn-rate", 0.7) else plug.config.getDouble("mob-spawning.monster-spawn-rate", 0.5)
+
+            if (Random.nextDouble() > spawnRate) return
 
             val etype: EntityType
             val rnd = Random.nextDouble()

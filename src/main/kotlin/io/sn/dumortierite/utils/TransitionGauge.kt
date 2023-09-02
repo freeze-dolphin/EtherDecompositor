@@ -16,9 +16,11 @@ open class TransitionGauge(
 ) {
 
     override fun toString(): String {
+        val roundoff = (min(currentVal / maxVal, 1f) as Float).roundToInt() * 100
+
         return progress.repeat(
             lengthInHalf
-        ) + " ${(min(currentVal / maxVal, 1f) as Float * 100.0).roundToInt()} % " + progress.repeat(
+        ) + " $roundoff % " + progress.repeat(
             lengthInHalf
         )
     }
