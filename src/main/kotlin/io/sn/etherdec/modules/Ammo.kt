@@ -6,7 +6,6 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler
 import io.sn.etherdec.EtherCore
 import io.sn.etherdec.objects.AbstractModule
 import me.deecaad.weaponmechanics.WeaponMechanics
-import me.deecaad.weaponmechanics.wrappers.PlayerWrapper
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.Particle
@@ -15,6 +14,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
+import org.bukkit.persistence.PersistentDataType
 
 class Ammo(plug: EtherCore) : AbstractModule(plug) {
 
@@ -30,7 +30,7 @@ class Ammo(plug: EtherCore) : AbstractModule(plug) {
                 Material.GOLDEN_HOE,
                 "&b通用武器弹药箱&r",
                 "",
-                "&e放在副手右键 &f为主手的武器填充一次弹药"
+                "&e副手右键 &f为主手的武器填充一次弹药"
             ).apply {
                 editMeta {
                     ItemFlag.values().forEach { flg ->
@@ -43,21 +43,25 @@ class Ammo(plug: EtherCore) : AbstractModule(plug) {
         ).apply {
             addItemHandler(ItemUseHandler {
                 if (it.hand == EquipmentSlot.OFF_HAND) {
-                    val mainHand = it.player.equipment.itemInMainHand
-                    val wpTitle = WeaponMechanics.getWeaponHandler().infoHandler.getWeaponTitle(mainHand, true) ?: return@ItemUseHandler
+                    val main = it.player.equipment.itemInMainHand
 
-                    if (WeaponMechanics.getWeaponHandler().reloadHandler.getAmmoLeft(mainHand, wpTitle) > 0) return@ItemUseHandler
+                    val wpTitle = WeaponMechanics.getWeaponHandler().infoHandler.getWeaponTitle(main, true) ?: return@ItemUseHandler
 
-                    if (!WeaponMechanics.getWeaponHandler().reloadHandler.startReloadWithoutTrigger(
-                        PlayerWrapper(it.player),
-                        wpTitle,
-                        mainHand,
-                        EquipmentSlot.HAND,
-                        true,
-                        false
-                    )) return@ItemUseHandler
+                    if (WeaponMechanics.getWeaponHandler().reloadHandler.getAmmoLeft(main, wpTitle) > 0) return@ItemUseHandler
+
+                    val wpCfg = WeaponMechanics.getConfigurations()
+                    val rldNum = wpCfg.getInt("$wpTitle.Reload.Magazine_Size", -1)
+
+                    if (rldNum < 1) return@ItemUseHandler
+
 
                     it.player.world.playSound(it.player, Sound.ENTITY_HORSE_SADDLE, 1f, 0.6f)
+                    it.player.world.playSound(it.player, Sound.ENTITY_HORSE_ARMOR, 1f, 0.6f)
+                    main.editMeta { im ->
+                        im.persistentDataContainer[NamespacedKey.fromString("weaponmechanics:ammo-left")!!, PersistentDataType.INTEGER] =
+                            rldNum
+                    }
+
                     it.item.editMeta { im ->
                         val dmgb = im as Damageable
                         if (!dmgb.isUnbreakable) {
@@ -68,6 +72,7 @@ class Ammo(plug: EtherCore) : AbstractModule(plug) {
                                 it.item.amount -= 1
                                 it.player.world.playSound(it.player, Sound.ENTITY_ITEM_BREAK, 1f, 1f)
                                 it.player.world.spawnParticle(Particle.ITEM_CRACK, it.player.location, 1, it.item)
+                                return@editMeta
                             }
                         }
                     }
@@ -81,10 +86,10 @@ class Ammo(plug: EtherCore) : AbstractModule(plug) {
             plug.group, SlimefunItemStack(
                 "ETHERITE_AMMO_${id.uppercase()}", ItemStack(Material.PRISMARINE_SHARD).apply {
                     editMeta {
-                        it.persistentDataContainer[NamespacedKey.fromString("weaponmechanics:ammo-name")!!, org.bukkit.persistence.PersistentDataType.STRING] =
+                        it.persistentDataContainer[NamespacedKey.fromString("weaponmechanics:ammo-name")!!, PersistentDataType.STRING] =
                             id
                         if (name.contains('夹') || name.contains('盒')) {
-                            it.persistentDataContainer[NamespacedKey.fromString("weaponmechanics:ammo-magazine")!!, org.bukkit.persistence.PersistentDataType.INTEGER] =
+                            it.persistentDataContainer[NamespacedKey.fromString("weaponmechanics:ammo-magazine")!!, PersistentDataType.INTEGER] =
                                 1
                         }
                     }

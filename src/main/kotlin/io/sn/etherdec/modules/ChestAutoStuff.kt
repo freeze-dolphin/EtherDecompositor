@@ -7,14 +7,18 @@ import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
+import io.github.thebusybiscuit.slimefun4.core.attributes.HologramOwner
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun.getDatabaseManager
+import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler
 import io.github.thebusybiscuit.slimefun4.implementation.items.blocks.WitherProofBlock
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils
+import io.sn.dumortierite.utils.TransitionGauge
 import io.sn.etherdec.EtherCore
 import io.sn.etherdec.findLastNewIndex
 import io.sn.etherdec.objects.AListener
 import io.sn.etherdec.objects.AbstractModule
+import io.sn.etherdec.objects.Unregisterable
 import me.deecaad.weaponmechanics.WeaponMechanics
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker
@@ -32,11 +36,11 @@ import kotlin.io.path.Path
 import kotlin.math.max
 import kotlin.random.Random
 
-class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
+class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener, Unregisterable {
 
     override fun postSetup() {
         SupplyChest(
-            plug, SlimefunItemStack("ETHERITE_SUPPLY_CHEST", ItemStack(Material.CHEST), "&e补给箱&r"), type, nullRecipe
+            plug, SlimefunItemStack("ETHERITE_SUPPLY_CHEST", ItemStack(Material.CHEST), "&e补给箱&r"), type, nullRecipe, this
         ).register(plug)
     }
 
@@ -86,10 +90,22 @@ class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
     }
 
     class SupplyChest(
-        private val plug: EtherCore, item: SlimefunItemStack, recipeType: RecipeType, recipe: Array<ItemStack?>
-    ) : WitherProofBlock(plug.group, item, recipeType, recipe), InventoryBlock {
+        private val plug: EtherCore,
+        item: SlimefunItemStack,
+        recipeType: RecipeType,
+        recipe: Array<ItemStack?>,
+        private val cas: ChestAutoStuff
+    ) : WitherProofBlock(plug.group, item, recipeType, recipe), InventoryBlock, HologramOwner {
 
-        private var internalTick: Long = 0
+        private val internalTickKey = "cas-internal-tick"
+
+        private fun getInternalTick(b: Block): Int {
+            return (StorageCacheUtils.getData(b.location, internalTickKey) ?: "0").toInt()
+        }
+
+        private fun setInternalTick(b: Block, i: Int) {
+            StorageCacheUtils.setData(b.location, internalTickKey, i.toString())
+        }
 
         init {
             createPreset(
@@ -97,6 +113,12 @@ class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
             ) {
                 constructMenu(it)
             }
+
+            addItemHandler((object: SimpleBlockBreakHandler() {
+                override fun onBlockBreak(b: Block) {
+                    this@SupplyChest.removeHologram(b)
+                }
+            }))
         }
 
         private fun constructMenu(preset: BlockMenuPreset) {
@@ -110,45 +132,29 @@ class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
 
         override fun preRegister() {
             addItemHandler(object : BlockTicker() {
-                override fun tick(b: Block, sf: SlimefunItem, data: SlimefunBlockData) {
-                    this@SupplyChest.tick(b)
-                }
-
-                override fun isSynchronized(): Boolean {
-                    return true
-                }
+                override fun tick(b: Block, sf: SlimefunItem, data: SlimefunBlockData) = this@SupplyChest.tick(b)
+                override fun isSynchronized(): Boolean = false
             })
-        }
-
-        private val key = NamespacedKey(plug, "ckChestAutoStuffLock")
-
-        private fun updateChunkLock(ck: Chunk) {
-            ck.isForceLoaded = ck.persistentDataContainer[key, PersistentDataType.INTEGER]!! > 0
-        }
-
-        private fun lockChunk(ck: Chunk) {
-            if (ck.persistentDataContainer.has(key)) {
-                ck.persistentDataContainer[key, PersistentDataType.INTEGER] =
-                    ck.persistentDataContainer[key, PersistentDataType.INTEGER]!! + 1
-            } else {
-                ck.persistentDataContainer[key, PersistentDataType.INTEGER] = 1
-            }
-            updateChunkLock(ck)
-        }
-
-        private fun unlockChunk(ck: Chunk) {
-            if (ck.persistentDataContainer.has(key)) {
-                ck.persistentDataContainer[key, PersistentDataType.INTEGER] =
-                    max(0, ck.persistentDataContainer[key, PersistentDataType.INTEGER]!! - 1)
-            } else {
-                ck.persistentDataContainer[key, PersistentDataType.INTEGER] = 0
-                plug.logger.warning("Chunk: [${ck.world.name}, ${ck.x}, ${ck.z}] has no NamespacedKey ${key.key} on unlocking!")
-            }
-            updateChunkLock(ck)
         }
 
         fun tick(b: Block) {
             val inv = StorageCacheUtils.getMenu(b.location) ?: return
+
+            val maxTick = plug.config.getInt("filling.fill-delay")
+            val emptyp = inv.toInventory().isEmpty
+
+            Bukkit.getScheduler().runTask(plug, Runnable {
+                val nbplrs = b.location.toCenterLocation().getNearbyPlayers(5.0)
+                if (nbplrs.isNotEmpty()) {
+                    val color = if (emptyp) "&f" else "&6"
+                    this.updateHologram(
+                        b,
+                        "$color\uD83D\uDD11 ${TransitionGauge(10, '|', "|", getInternalTick(b).toFloat(), maxTick.toFloat(), emptyp).withColor()}"
+                    )
+                } else {
+                    this.removeHologram(b)
+                }
+            })
 
             (0..35).forEach {
                 if (inv.getItemInSlot(it) != null) {
@@ -162,18 +168,18 @@ class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
             inv.setEmptySlotsClickable(true)
             inv.setPlayerInventoryClickable(true)
 
-            if (inv.toInventory().isEmpty) {
-                if (internalTick == 0L) {
-                    lockChunk(b.chunk)
+            if (emptyp) {
+                if (getInternalTick(b) == 0) {
+                    Bukkit.getScheduler().runTask(plug, Runnable { cas.lockChunk(b.chunk) })
                 }
 
-                if (internalTick > plug.config.getLong("filling.fill-delay")) {
-                    internalTick = 0
+                if (getInternalTick(b) > maxTick) {
+                    setInternalTick(b, 0)
                     fillChest(inv)
-                    unlockChunk(b.chunk)
-                    return
+                    Bukkit.getScheduler().runTask(plug, Runnable { cas.unlockChunk(b.chunk) })
+                } else {
+                    setInternalTick(b, getInternalTick(b) + 1)
                 }
-                internalTick += 1
             }
         }
 
@@ -265,5 +271,60 @@ class ChestAutoStuff(plug: EtherCore) : AbstractModule(plug), AListener {
 
     }
 
+    private val key = NamespacedKey(plug, "ckChestAutoStuffLock")
+
+    private val forceLoadedChunkSet = mutableSetOf<Chunk>()
+
+    private fun Chunk.toStr(): String {
+        val pdc =
+            if (this.persistentDataContainer.has(key)) this.persistentDataContainer[key, PersistentDataType.INTEGER].toString() else ""
+        return "{Chunk=${this.world.name},${this.x},${this.z},${pdc}}"
+    }
+
+    private fun updateChunkLock(ck: Chunk) {
+        (ck.persistentDataContainer[key, PersistentDataType.INTEGER]!! > 0).let {
+            ck.isForceLoaded = it
+            if (it) {
+                forceLoadedChunkSet += ck
+            } else {
+                forceLoadedChunkSet.remove(ck)
+            }
+        }
+
+        if (plug.config.getBoolean("debug.chest-lock-chunk", false)) {
+            forceLoadedChunkSet.forEach {
+                plug.logger.info(it.toStr())
+            }
+            plug.logger.info("\n")
+        }
+    }
+
+    private fun lockChunk(ck: Chunk) {
+        if (ck.persistentDataContainer.has(key)) {
+            ck.persistentDataContainer[key, PersistentDataType.INTEGER] = ck.persistentDataContainer[key, PersistentDataType.INTEGER]!! + 1
+        } else {
+            ck.persistentDataContainer[key, PersistentDataType.INTEGER] = 1
+        }
+        updateChunkLock(ck)
+    }
+
+    private fun unlockChunk(ck: Chunk) {
+        if (ck.persistentDataContainer.has(key)) {
+            ck.persistentDataContainer[key, PersistentDataType.INTEGER] =
+                max(0, ck.persistentDataContainer[key, PersistentDataType.INTEGER]!! - 1)
+        } else {
+            ck.persistentDataContainer[key, PersistentDataType.INTEGER] = 0
+            plug.logger.warning("Chunk: [${ck.world.name}, ${ck.x}, ${ck.z}] has no NamespacedKey ${key.key} on unlocking!")
+        }
+        updateChunkLock(ck)
+    }
+
+    override fun onDisable() {
+        forceLoadedChunkSet.forEach {
+            it.isForceLoaded = false
+            it.persistentDataContainer[key, PersistentDataType.INTEGER] = 0
+            plug.logger.info("Force unlock chunk: ${it.toStr()}")
+        }
+    }
 
 }

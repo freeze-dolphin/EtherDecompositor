@@ -42,6 +42,7 @@ class EtherCore : JavaPlugin(), EtherSlimefunAddon {
         fun plains(s: Component): String = plain.serialize(s)
         fun jsond(jsonStr: String): Component = json.deserialize(jsonStr)
         fun legacyd(s: String): Component = legacy.deserialize(s)
+        fun legacys(s: Component): String = legacy.toBuilder().useUnusualXRepeatedCharacterHexFormat().hexColors().build().serialize(s)
     }
 
     val group = ItemGroup(

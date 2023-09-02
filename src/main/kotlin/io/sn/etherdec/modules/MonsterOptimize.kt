@@ -103,6 +103,7 @@ class MonsterOptimize(plug: EtherCore) : AbstractModule(plug), AListener {
                 }
 
                 if (ety is Phantom) {
+                    if (Random.nextDouble() < plug.config.getDouble("mob-spawning.phantom-resistance-rate", 0.2)) ety.addPotionEffect(PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 2400, Random.nextInt(3)))
                     ety.target =
                         ety.location.getNearbyPlayers(plug.config.getDouble("mob-spawning.phantom-view-radius", 50.0)).let { nearBy ->
                             if (nearBy.isEmpty()) return@spawnEntity
