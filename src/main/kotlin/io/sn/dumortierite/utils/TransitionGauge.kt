@@ -4,7 +4,6 @@ package io.sn.dumortierite.utils
 
 import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.ObjectUtils.min
 import io.sn.etherdec.EtherCore
-import kotlin.math.roundToInt
 
 open class TransitionGauge(
     private val lengthInHalf: Int,
