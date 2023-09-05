@@ -52,11 +52,13 @@ class Death(plug: EtherCore) : AbstractModule(plug), AListener {
 
                 val acc = Balance.balance(player)
                 val droped = min(rnd, acc)
+
                 if (droped < 1) return
+
                 Balance.remove(player, droped)
                 player.sendMessage(EtherCore.minid("<dark_gray>[<red>喜报<dark_gray>] <white>你因为死亡丢失了 <green>${droped} <dark_green>E"))
 
-                if (evt.damager is Player) {
+                if (evt.damager is Player && evt.damager.uniqueId != player.uniqueId) {
                     val damager = evt.damager as Player
                     damager.sendMessage(EtherCore.minid("<dark_gray>[<green>经济<dark_gray>] <white>你因为击杀 <yellow>${player.name} <white>获得了 <green>${droped} <dark_green>E"))
                     Balance.add(damager, droped)
