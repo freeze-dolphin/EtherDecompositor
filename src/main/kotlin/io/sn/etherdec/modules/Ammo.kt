@@ -332,7 +332,7 @@ object AmmoList {
         "12GFLECHETTE",
         "L96",
         "PREDATOR37MMSR",
-        "榴弹",
+        "榴弹 &8(&f40mm&8)",
         "M21",
         "PAW20",
         "12GPOISONEDFLECHETTE",
